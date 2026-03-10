@@ -1,7 +1,6 @@
-import os
+from typing import Any, Dict, Optional
+from urllib.parse import urljoin
 import requests
-from typing import Any, Dict, Optional, Union
-from urllib.parse import urljoin, urlencode
 
 from . import errors
 from .dsl import DSL
@@ -19,14 +18,15 @@ class Client(DSL):
         self.url = url
         self.session = requests.Session()
 
-    def request(self, method: str, path: str, query: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> requests.Response:
+    def request(self, method: str, path: str, query: Optional[Dict[str, Any]] = None,
+                headers: Optional[Dict[str, str]] = None) -> requests.Response:
         method = method.lower()
         if method not in self.REQUESTS:
             raise ValueError(f"Unsupported method {method}. Only get, post, put, patch, delete are allowed")
 
         full_url = urljoin(self.url, path)
         params = {'access_token': self.api_key}
-        
+
         request_headers = self.HEADERS.copy()
         if headers:
             request_headers.update(headers)
@@ -39,13 +39,12 @@ class Client(DSL):
             else:
                 kwargs['data'] = query
         elif method == 'get' and query:
-             kwargs['params'].update(query)
+            kwargs['params'].update(query)
 
         response = self.session.request(method, full_url, **kwargs)
 
         if 200 <= response.status_code <= 299:
             return response
-        elif response.status_code == 404:
+        if response.status_code == 404:
             raise errors.ResourceNotFoundError(response=response)
-        else:
-            raise errors.ClientError(response=response)
+        raise errors.ClientError(response=response)

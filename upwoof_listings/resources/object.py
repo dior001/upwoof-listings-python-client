@@ -1,7 +1,6 @@
-import json
 from datetime import datetime
+from typing import Any, Dict, List, Union
 from dateutil import parser
-from typing import Any, Dict, List, Optional, Union
 
 class Serializer:
     @staticmethod
@@ -12,8 +11,9 @@ class Serializer:
     def deserialize(value: Any) -> Any:
         if isinstance(value, list):
             return [Serializer.deserialize(v) if isinstance(v, (list, dict)) else v for v in value]
-        elif isinstance(value, dict):
-            return {k.lower(): (Serializer.deserialize(v) if isinstance(v, (list, dict)) else v) for k, v in value.items()}
+        if isinstance(value, dict):
+            return {k.lower(): (Serializer.deserialize(v) if isinstance(v, (list, dict)) else v)
+                    for k, v in value.items()}
         return value
 
 class TimeSerializer:
@@ -50,11 +50,11 @@ class ResourceObject:
     def parse(cls, response: Any) -> Union['ResourceObject', List['ResourceObject'], None]:
         if not response:
             raise ValueError("Response cannot be blank")
-        
+
         data = response.json()
         if isinstance(data, list):
             return [cls(item) for item in data]
-        elif isinstance(data, dict):
+        if isinstance(data, dict):
             return cls(data)
         return None
 
