@@ -23,18 +23,6 @@ client = upwoof_listings.get_client()
 
 # List all listings
 listings = client.get_listings()
-
-for listing in listings:
-    print(f"Listing ID: {listing.id}")
-
-# Create a new listing
-new_listing = client.create_listing(params={
-    'name': 'Great Pet Stay',
-    'description': 'A wonderful place for your pet.'
-})
-
-# Get a specific listing
-listing = client.get_listing(id='123')
 ```
 
 ## Documentation
