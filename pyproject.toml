@@ -1,0 +1,22 @@
+[project]
+name = "upwoof-listings-python-client"
+version = "0.1.0"
+description = "A Python client for the UpWoof v1 API"
+authors = [
+    { name = "Junie", email = "junie@jetbrains.com" }
+]
+dependencies = [
+    "requests>=2.25.0",
+    "python-dateutil>=2.8.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "responses>=0.18.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
