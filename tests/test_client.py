@@ -116,33 +116,33 @@ class TestDSL:
     def test_get_listing(self, client):
         responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
-        listing = client.get_listing('1')
+        listing = client.get_listing(id='1')
         assert listing.id == '1'
 
     def test_get_listing_blank_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
-            client.get_listing('')
+            client.get_listing(id='')
 
     @responses.activate
     def test_update_listing_blank_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
-            client.update_listing('', {})
+            client.update_listing(id='', params={})
 
     @responses.activate
     def test_patch_listing_blank_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
-            client.patch_listing('', {})
+            client.patch_listing(id='', params={})
 
     @responses.activate
     def test_delete_listing_blank_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
-            client.delete_listing('')
+            client.delete_listing(id='')
 
     @responses.activate
     def test_create_listing(self, client):
         responses.add(responses.POST, 'https://www.upwoof.com/api/v1/listings/',
                       json={'ID': '2'}, status=201)
-        listing = client.create_listing({'NAME': 'New Listing'})
+        listing = client.create_listing(params={'NAME': 'New Listing'})
         assert listing.id == '2'
         assert responses.calls[0].request.body == b'{"NAME": "New Listing"}'
 
@@ -150,21 +150,21 @@ class TestDSL:
     def test_update_listing(self, client):
         responses.add(responses.PUT, 'https://www.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
-        listing = client.update_listing('1', {'NAME': 'Updated'})
+        listing = client.update_listing(id='1', params={'NAME': 'Updated'})
         assert listing.id == '1'
 
     @responses.activate
     def test_patch_listing(self, client):
         responses.add(responses.PATCH, 'https://www.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
-        listing = client.patch_listing('1', {'NAME': 'Patched'})
+        listing = client.patch_listing(id='1', params={'NAME': 'Patched'})
         assert listing.id == '1'
 
     @responses.activate
     def test_delete_listing(self, client):
         responses.add(responses.DELETE, 'https://www.upwoof.com/api/v1/listings/1',
                       status=204)
-        assert client.delete_listing('1') is True
+        assert client.delete_listing(id='1') is True
 
 class TestGlobalClient:
     def test_global_client_init(self):
@@ -210,76 +210,92 @@ class TestAllDSL:
         for single, plural in res_types:
             # get single
             responses.add(responses.GET, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
-            getattr(client, f'get_{single}')('1')
+            getattr(client, f'get_{single}')(id='1')
             # create
             responses.add(responses.POST, f'https://www.upwoof.com/api/v1/{plural}/', json={}, status=201)
-            getattr(client, f'create_{single}')({})
+            getattr(client, f'create_{single}')(params={})
             # update
             responses.add(responses.PUT, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
-            getattr(client, f'update_{single}')('1', {})
+            getattr(client, f'update_{single}')(id='1', params={})
             # patch
             responses.add(responses.PATCH, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
-            getattr(client, f'patch_{single}')('1', {})
+            getattr(client, f'patch_{single}')(id='1', params={})
             # delete
             responses.add(responses.DELETE, f'https://www.upwoof.com/api/v1/{plural}/1', status=204)
-            getattr(client, f'delete_{single}')('1')
+            getattr(client, f'delete_{single}')(id='1')
 
         # Resource specific singletons
         responses.add(responses.GET, 'https://www.upwoof.com/api/v1/accommodation_types/1', json={}, status=200)
-        client.get_accommodation_type('1')
+        client.get_accommodation_type(id='1')
         responses.add(responses.GET, 'https://www.upwoof.com/api/v1/animal_types/1', json={}, status=200)
-        client.get_animal_type('1')
+        client.get_animal_type(id='1')
         responses.add(responses.GET, 'https://www.upwoof.com/api/v1/breeds/1', json={}, status=200)
-        client.get_breed('1')
+        client.get_breed(id='1')
 
+        # New endpoints
+        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/users/me', json={}, status=200)
+        client.get_user_me()
+
+        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/credit_notes/1/void', json={}, status=200)
+        client.void_credit_note(id='1')
+
+        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/invoices/1/pay_out_of_band', json={}, status=200)
+        client.pay_invoice_out_of_band(id='1')
+
+    def test_resources_property(self, client):
+        from upwoof_listings import resources
+        assert client.resources == resources
     def test_dsl_blank_id_errors(self, client):
-        with pytest.raises(ValueError): client.get_pet('')
-        with pytest.raises(ValueError): client.update_pet('', {})
-        with pytest.raises(ValueError): client.patch_pet('', {})
-        with pytest.raises(ValueError): client.delete_pet('')
+        with pytest.raises(ValueError): client.get_pet(id='')
+        with pytest.raises(ValueError): client.update_pet(id='', params={})
+        with pytest.raises(ValueError): client.patch_pet(id='', params={})
+        with pytest.raises(ValueError): client.delete_pet(id='')
         
-        with pytest.raises(ValueError): client.get_accommodation('')
-        with pytest.raises(ValueError): client.update_accommodation('', {})
-        with pytest.raises(ValueError): client.patch_accommodation('', {})
-        with pytest.raises(ValueError): client.delete_accommodation('')
+        with pytest.raises(ValueError): client.void_credit_note(id='')
+        with pytest.raises(ValueError): client.pay_invoice_out_of_band(id='')
 
-        with pytest.raises(ValueError): client.get_credit_note('')
-        with pytest.raises(ValueError): client.update_credit_note('', {})
-        with pytest.raises(ValueError): client.patch_credit_note('', {})
-        with pytest.raises(ValueError): client.delete_credit_note('')
+        with pytest.raises(ValueError): client.get_accommodation(id='')
+        with pytest.raises(ValueError): client.update_accommodation(id='', params={})
+        with pytest.raises(ValueError): client.patch_accommodation(id='', params={})
+        with pytest.raises(ValueError): client.delete_accommodation(id='')
 
-        with pytest.raises(ValueError): client.get_customer('')
-        with pytest.raises(ValueError): client.update_customer('', {})
-        with pytest.raises(ValueError): client.patch_customer('', {})
-        with pytest.raises(ValueError): client.delete_customer('')
+        with pytest.raises(ValueError): client.get_credit_note(id='')
+        with pytest.raises(ValueError): client.update_credit_note(id='', params={})
+        with pytest.raises(ValueError): client.patch_credit_note(id='', params={})
+        with pytest.raises(ValueError): client.delete_credit_note(id='')
 
-        with pytest.raises(ValueError): client.get_invoice('')
-        with pytest.raises(ValueError): client.update_invoice('', {})
-        with pytest.raises(ValueError): client.patch_invoice('', {})
-        with pytest.raises(ValueError): client.delete_invoice('')
+        with pytest.raises(ValueError): client.get_customer(id='')
+        with pytest.raises(ValueError): client.update_customer(id='', params={})
+        with pytest.raises(ValueError): client.patch_customer(id='', params={})
+        with pytest.raises(ValueError): client.delete_customer(id='')
 
-        with pytest.raises(ValueError): client.get_order('')
-        with pytest.raises(ValueError): client.update_order('', {})
-        with pytest.raises(ValueError): client.patch_order('', {})
-        with pytest.raises(ValueError): client.delete_order('')
+        with pytest.raises(ValueError): client.get_invoice(id='')
+        with pytest.raises(ValueError): client.update_invoice(id='', params={})
+        with pytest.raises(ValueError): client.patch_invoice(id='', params={})
+        with pytest.raises(ValueError): client.delete_invoice(id='')
 
-        with pytest.raises(ValueError): client.get_reservation('')
-        with pytest.raises(ValueError): client.update_reservation('', {})
-        with pytest.raises(ValueError): client.patch_reservation('', {})
-        with pytest.raises(ValueError): client.delete_reservation('')
+        with pytest.raises(ValueError): client.get_order(id='')
+        with pytest.raises(ValueError): client.update_order(id='', params={})
+        with pytest.raises(ValueError): client.patch_order(id='', params={})
+        with pytest.raises(ValueError): client.delete_order(id='')
 
-        with pytest.raises(ValueError): client.get_user('')
-        with pytest.raises(ValueError): client.update_user('', {})
-        with pytest.raises(ValueError): client.patch_user('', {})
-        with pytest.raises(ValueError): client.delete_user('')
+        with pytest.raises(ValueError): client.get_reservation(id='')
+        with pytest.raises(ValueError): client.update_reservation(id='', params={})
+        with pytest.raises(ValueError): client.patch_reservation(id='', params={})
+        with pytest.raises(ValueError): client.delete_reservation(id='')
 
-        with pytest.raises(ValueError): client.get_accommodation_type('')
-        with pytest.raises(ValueError): client.get_animal_type('')
-        with pytest.raises(ValueError): client.get_breed('')
+        with pytest.raises(ValueError): client.get_user(id='')
+        with pytest.raises(ValueError): client.update_user(id='', params={})
+        with pytest.raises(ValueError): client.patch_user(id='', params={})
+        with pytest.raises(ValueError): client.delete_user(id='')
+
+        with pytest.raises(ValueError): client.get_accommodation_type(id='')
+        with pytest.raises(ValueError): client.get_animal_type(id='')
+        with pytest.raises(ValueError): client.get_breed(id='')
 
 def test_serializer_basic():
     from upwoof_listings.resources.object import Serializer
     assert Serializer.serialize(123) == '123'
-    assert Serializer.deserialize({'KEY': 'VAL'}) == {'key': 'VAL'}
-    assert Serializer.deserialize(['A', 'B']) == ['A', 'B']
+    assert Serializer.deserialize({'KEY': 'VAL', 'NESTED': {'K': 'V'}}) == {'key': 'VAL', 'nested': {'k': 'V'}}
+    assert Serializer.deserialize(['A', {'K': 'V'}]) == ['A', {'k': 'V'}]
     assert Serializer.deserialize('plain') == 'plain'

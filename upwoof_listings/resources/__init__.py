@@ -1,37 +1,13 @@
 from .object import ResourceObject
-
-class Listing(ResourceObject):
-    pass
-
-class Accommodation(ResourceObject):
-    pass
-
-class CreditNote(ResourceObject):
-    pass
-
-class Customer(ResourceObject):
-    pass
-
-class Invoice(ResourceObject):
-    pass
-
-class Order(ResourceObject):
-    pass
-
-class Pet(ResourceObject):
-    pass
-
-class Reservation(ResourceObject):
-    pass
-
-class User(ResourceObject):
-    pass
-
-class AccommodationType(ResourceObject):
-    pass
-
-class AnimalType(ResourceObject):
-    pass
-
-class Breed(ResourceObject):
-    pass
+from .listing import Listing
+from .accommodation import Accommodation
+from .credit_note import CreditNote
+from .customer import Customer
+from .invoice import Invoice
+from .order import Order
+from .pet import Pet
+from .reservation import Reservation
+from .user import User
+from .accommodation_type import AccommodationType
+from .animal_type import AnimalType
+from .breed import Breed

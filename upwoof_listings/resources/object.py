@@ -11,9 +11,9 @@ class Serializer:
     @staticmethod
     def deserialize(value: Any) -> Any:
         if isinstance(value, list):
-            return [v for v in value]
+            return [Serializer.deserialize(v) if isinstance(v, (list, dict)) else v for v in value]
         elif isinstance(value, dict):
-            return {k.lower(): v for k, v in value.items()}
+            return {k.lower(): (Serializer.deserialize(v) if isinstance(v, (list, dict)) else v) for k, v in value.items()}
         return value
 
 class TimeSerializer:
