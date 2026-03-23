@@ -28,7 +28,9 @@ class TimeSerializer:
 class ResourceObject:
     _attributes = {
         'date_created_utc': TimeSerializer,
-        'date_updated_utc': TimeSerializer
+        'date_updated_utc': TimeSerializer,
+        'created_at': TimeSerializer,
+        'updated_at': TimeSerializer
     }
 
     def __init__(self, data: Dict[str, Any]):
