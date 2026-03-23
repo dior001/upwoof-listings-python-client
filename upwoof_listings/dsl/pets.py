@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class PetsDSL:
-    def get_pets(self) -> List[resources.Pet]:
-        return resources.Pet.parse(self.request('get', 'pets/'))
+    def get_pets(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Pet]:
+        return resources.Pet.parse(self.request('get', 'pets/', query=params))
 
     def get_pet(self, *, resource_id: str) -> resources.Pet:
         if not resource_id:

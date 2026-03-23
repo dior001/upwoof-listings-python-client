@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class CustomersDSL:
-    def get_customers(self) -> List[resources.Customer]:
-        return resources.Customer.parse(self.request('get', 'customers/'))
+    def get_customers(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Customer]:
+        return resources.Customer.parse(self.request('get', 'customers/', query=params))
 
     def get_customer(self, *, resource_id: str) -> resources.Customer:
         if not resource_id:

@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class CreditNotesDSL:
-    def get_credit_notes(self) -> List[resources.CreditNote]:
-        return resources.CreditNote.parse(self.request('get', 'credit_notes/'))
+    def get_credit_notes(self, params: Optional[Dict[str, Any]] = None) -> List[resources.CreditNote]:
+        return resources.CreditNote.parse(self.request('get', 'credit_notes/', query=params))
 
     def get_credit_note(self, *, resource_id: str) -> resources.CreditNote:
         if not resource_id:

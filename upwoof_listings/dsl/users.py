@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class UsersDSL:
-    def get_users(self) -> List[resources.User]:
-        return resources.User.parse(self.request('get', 'users/'))
+    def get_users(self, params: Optional[Dict[str, Any]] = None) -> List[resources.User]:
+        return resources.User.parse(self.request('get', 'users/', query=params))
 
     def get_user_me(self) -> resources.User:
         return resources.User.parse(self.request('get', 'users/me'))

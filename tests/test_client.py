@@ -107,12 +107,32 @@ class TestResources:
 
 class TestDSL:
     @responses.activate
-    def test_get_listings(self, client):
+    def test_get_listings_with_params(self, client):
         responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
                       json=[{'ID': '1'}], status=200)
-        listings = client.get_listings()
+        listings = client.get_listings(params={'status': 'active'})
         assert len(listings) == 1
-        assert listings[0].id == '1'
+        assert 'status=active' in responses.calls[0].request.url
+
+    @responses.activate
+    def test_uw_listing_cms_apps(self, client):
+        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
+                      json=[{'ID': 'app1'}], status=200)
+        apps = client.get_uw_listing_cms_apps()
+        assert len(apps) == 1
+        assert apps[0].id == 'app1'
+
+        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
+                      json={'ID': 'app2'}, status=201)
+        app = client.create_uw_listing_cms_app(params={'NAME': 'New App'})
+        assert app.id == 'app2'
+        assert '"NAME": "New App"' in responses.calls[1].request.body.decode()
+
+    @responses.activate
+    def test_delete_methods(self, client):
+        responses.add(responses.DELETE, 'https://www.upwoof.com/api/v1/breeds/breed1',
+                      status=204)
+        assert client.delete_breed(resource_id='breed1') is True
 
     @responses.activate
     def test_get_listing(self, client):

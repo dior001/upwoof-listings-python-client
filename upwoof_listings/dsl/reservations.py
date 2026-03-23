@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class ReservationsDSL:
-    def get_reservations(self) -> List[resources.Reservation]:
-        return resources.Reservation.parse(self.request('get', 'reservations/'))
+    def get_reservations(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Reservation]:
+        return resources.Reservation.parse(self.request('get', 'reservations/', query=params))
 
     def get_reservation(self, *, resource_id: str) -> resources.Reservation:
         if not resource_id:

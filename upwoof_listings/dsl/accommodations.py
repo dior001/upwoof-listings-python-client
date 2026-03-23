@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class AccommodationsDSL:
-    def get_accommodations(self) -> List[resources.Accommodation]:
-        return resources.Accommodation.parse(self.request('get', 'accommodations/'))
+    def get_accommodations(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Accommodation]:
+        return resources.Accommodation.parse(self.request('get', 'accommodations/', query=params))
 
     def get_accommodation(self, *, resource_id: str) -> resources.Accommodation:
         if not resource_id:

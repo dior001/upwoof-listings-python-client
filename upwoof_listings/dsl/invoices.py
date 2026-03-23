@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class InvoicesDSL:
-    def get_invoices(self) -> List[resources.Invoice]:
-        return resources.Invoice.parse(self.request('get', 'invoices/'))
+    def get_invoices(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Invoice]:
+        return resources.Invoice.parse(self.request('get', 'invoices/', query=params))
 
     def get_invoice(self, *, resource_id: str) -> resources.Invoice:
         if not resource_id:

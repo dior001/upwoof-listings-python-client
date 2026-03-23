@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class ListingsDSL:
-    def get_listings(self) -> List[resources.Listing]:
-        return resources.Listing.parse(self.request('get', 'listings/'))
+    def get_listings(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Listing]:
+        return resources.Listing.parse(self.request('get', 'listings/', query=params))
 
     def get_listing(self, *, resource_id: str) -> resources.Listing:
         if not resource_id:

@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from .. import resources
 
 class OrdersDSL:
-    def get_orders(self) -> List[resources.Order]:
-        return resources.Order.parse(self.request('get', 'orders/'))
+    def get_orders(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Order]:
+        return resources.Order.parse(self.request('get', 'orders/', query=params))
 
     def get_order(self, *, resource_id: str) -> resources.Order:
         if not resource_id:

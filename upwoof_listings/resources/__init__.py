@@ -11,3 +11,4 @@ from .user import User
 from .accommodation_type import AccommodationType
 from .animal_type import AnimalType
 from .breed import Breed
+from .uw_listing_cms_app import UwListingCmsApp
