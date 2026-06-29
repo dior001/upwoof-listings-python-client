@@ -1,5 +1,5 @@
 api_key = None
-url = 'https://www.upwoof.com/api/v1/'
+url = 'https://pethotels.upwoof.com/api/v1/'
 logger = None
 
 def get_client():

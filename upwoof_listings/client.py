@@ -12,7 +12,7 @@ class Client(DSL):
         'Content-Type': 'application/json'
     }
 
-    def __init__(self, api_key: Optional[str] = None, url: str = 'https://www.upwoof.com/api/v1/'):
+    def __init__(self, api_key: Optional[str] = None, url: str = 'https://pethotels.upwoof.com/api/v1/'):
         from . import api_key as global_api_key
         self.api_key = api_key or global_api_key
         self.url = url

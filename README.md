@@ -27,7 +27,7 @@ listings = client.get_listings()
 
 ## Documentation
 
-https://www.upwoof.com/api-docs/v1
+https://pethotels.upwoof.com/api-docs/v1
 
 ## Contributing
 

@@ -15,7 +15,7 @@ def client():
 class TestClient:
     @responses.activate
     def test_request_success(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={'ID': '1'}, status=200)
         response = client.request('get', 'listings/')
         assert response.status_code == 200
@@ -24,28 +24,28 @@ class TestClient:
 
     @responses.activate
     def test_request_not_found(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/999',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/999',
                       status=404)
         with pytest.raises(ResourceNotFoundError):
             client.request('get', 'listings/999')
 
     @responses.activate
     def test_request_custom_headers(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={}, status=200)
         client.request('get', 'listings/', headers={'X-Custom': 'Value'})
         assert responses.calls[0].request.headers['X-Custom'] == 'Value'
 
     @responses.activate
     def test_request_post_data(self, client):
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={}, status=201)
         client.request('post', 'listings/', query={'foo': 'bar'}, headers={'Content-Type': 'application/x-www-form-urlencoded'})
         assert responses.calls[0].request.body == 'foo=bar'
 
     @responses.activate
     def test_request_get_query(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={}, status=200)
         client.request('get', 'listings/', query={'foo': 'bar'})
         assert 'foo=bar' in responses.calls[0].request.url
@@ -56,7 +56,7 @@ class TestClient:
 
     @responses.activate
     def test_request_client_error(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/',
                       status=400)
         with pytest.raises(ClientError):
             client.request('get', 'listings/')
@@ -108,7 +108,7 @@ class TestResources:
 class TestDSL:
     @responses.activate
     def test_get_listings_with_params(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json=[{'ID': '1'}], status=200)
         listings = client.get_listings(params={'status': 'active'})
         assert len(listings) == 1
@@ -116,13 +116,13 @@ class TestDSL:
 
     @responses.activate
     def test_uw_listing_cms_apps(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/uw_listing_cms_apps/',
                       json=[{'ID': 'app1'}], status=200)
         apps = client.get_uw_listing_cms_apps()
         assert len(apps) == 1
         assert apps[0].id == 'app1'
 
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/uw_listing_cms_apps/',
                       json={'ID': 'app2'}, status=201)
         app = client.create_uw_listing_cms_app(params={'NAME': 'New App'})
         assert app.id == 'app2'
@@ -130,13 +130,13 @@ class TestDSL:
 
     @responses.activate
     def test_delete_methods(self, client):
-        responses.add(responses.DELETE, 'https://www.upwoof.com/api/v1/breeds/breed1',
+        responses.add(responses.DELETE, 'https://pethotels.upwoof.com/api/v1/breeds/breed1',
                       status=204)
         assert client.delete_breed(resource_id='breed1') is True
 
     @responses.activate
     def test_get_listing(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/1',
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
         listing = client.get_listing(resource_id='1')
         assert listing.id == '1'
@@ -162,7 +162,7 @@ class TestDSL:
 
     @responses.activate
     def test_create_listing(self, client):
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/listings/',
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={'ID': '2'}, status=201)
         listing = client.create_listing(params={'NAME': 'New Listing'})
         assert listing.id == '2'
@@ -170,21 +170,21 @@ class TestDSL:
 
     @responses.activate
     def test_update_listing(self, client):
-        responses.add(responses.PUT, 'https://www.upwoof.com/api/v1/listings/1',
+        responses.add(responses.PUT, 'https://pethotels.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
         listing = client.update_listing(resource_id='1', params={'NAME': 'Updated'})
         assert listing.id == '1'
 
     @responses.activate
     def test_patch_listing(self, client):
-        responses.add(responses.PATCH, 'https://www.upwoof.com/api/v1/listings/1',
+        responses.add(responses.PATCH, 'https://pethotels.upwoof.com/api/v1/listings/1',
                       json={'ID': '1'}, status=200)
         listing = client.patch_listing(resource_id='1', params={'NAME': 'Patched'})
         assert listing.id == '1'
 
     @responses.activate
     def test_delete_listing(self, client):
-        responses.add(responses.DELETE, 'https://www.upwoof.com/api/v1/listings/1',
+        responses.add(responses.DELETE, 'https://pethotels.upwoof.com/api/v1/listings/1',
                       status=204)
         assert client.delete_listing(resource_id='1') is True
 
@@ -213,7 +213,7 @@ class TestAllDSL:
             ('get_breeds', 'breeds/'),
         ]
         for method_name, path in methods:
-            responses.add(responses.GET, f'https://www.upwoof.com/api/v1/{path}',
+            responses.add(responses.GET, f'https://pethotels.upwoof.com/api/v1/{path}',
                           json=[], status=200)
             getattr(client, method_name)()
         
@@ -228,41 +228,60 @@ class TestAllDSL:
             ('reservation', 'reservations'),
             ('user', 'users'),
             ('listing', 'listings'),
+            ('accommodation_type', 'accommodation_types'),
+            ('animal_type', 'animal_types'),
+            ('breed', 'breeds'),
+            ('uw_listing_cms_app', 'uw_listing_cms_apps'),
         ]
         for single, plural in res_types:
             # get single
-            responses.add(responses.GET, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
+            responses.add(responses.GET, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
             getattr(client, f'get_{single}')(resource_id='1')
             # create
-            responses.add(responses.POST, f'https://www.upwoof.com/api/v1/{plural}/', json={}, status=201)
+            responses.add(responses.POST, f'https://pethotels.upwoof.com/api/v1/{plural}/', json={}, status=201)
             getattr(client, f'create_{single}')(params={})
             # update
-            responses.add(responses.PUT, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
+            responses.add(responses.PUT, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
             getattr(client, f'update_{single}')(resource_id='1', params={})
             # patch
-            responses.add(responses.PATCH, f'https://www.upwoof.com/api/v1/{plural}/1', json={}, status=200)
+            responses.add(responses.PATCH, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
             getattr(client, f'patch_{single}')(resource_id='1', params={})
             # delete
-            responses.add(responses.DELETE, f'https://www.upwoof.com/api/v1/{plural}/1', status=204)
+            responses.add(responses.DELETE, f'https://pethotels.upwoof.com/api/v1/{plural}/1', status=204)
             getattr(client, f'delete_{single}')(resource_id='1')
 
         # Resource specific singletons
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/accommodation_types/1', json={}, status=200)
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/accommodation_types/1', json={}, status=200)
         client.get_accommodation_type(resource_id='1')
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/animal_types/1', json={}, status=200)
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/animal_types/1', json={}, status=200)
         client.get_animal_type(resource_id='1')
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/breeds/1', json={}, status=200)
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/breeds/1', json={}, status=200)
         client.get_breed(resource_id='1')
 
         # New endpoints
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/users/me', json={}, status=200)
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/users/me', json={}, status=200)
         client.get_user_me()
 
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/credit_notes/1/void', json={}, status=200)
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/credit_notes/1/void', json={}, status=200)
         client.void_credit_note(resource_id='1')
 
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/invoices/1/pay_out_of_band', json={}, status=200)
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/invoices/1/pay_out_of_band', json={}, status=200)
         client.pay_invoice_out_of_band(resource_id='1')
+
+    def test_blank_resource_id_raises(self, client):
+        singles = [
+            'pet', 'accommodation', 'credit_note', 'customer', 'invoice',
+            'order', 'reservation', 'user', 'listing', 'accommodation_type',
+            'animal_type', 'breed', 'uw_listing_cms_app',
+        ]
+        for single in singles:
+            for prefix in ('get', 'update', 'patch', 'delete'):
+                method = getattr(client, f'{prefix}_{single}')
+                kwargs = {'resource_id': ''}
+                if prefix in ('update', 'patch'):
+                    kwargs['params'] = {}
+                with pytest.raises(ValueError, match="ID cannot be blank"):
+                    method(**kwargs)
 
     def test_resources_property(self, client):
         from upwoof_listings import resources
