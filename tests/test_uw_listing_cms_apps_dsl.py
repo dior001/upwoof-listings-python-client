@@ -2,7 +2,6 @@ from datetime import datetime
 import pytest
 import responses
 from upwoof_listings.client import Client
-from upwoof_listings.resources import UwListingCmsApp
 
 @pytest.fixture
 def client():

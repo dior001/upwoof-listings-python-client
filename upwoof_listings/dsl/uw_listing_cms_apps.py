@@ -21,7 +21,8 @@ class UwListingCmsAppsDSL:
     def patch_uw_listing_cms_app(self, *, resource_id: str, params: Dict[str, Any]) -> resources.UwListingCmsApp:
         if not resource_id:
             raise ValueError("ID cannot be blank")
-        return resources.UwListingCmsApp.parse(self.request('patch', f"uw_listing_cms_apps/{resource_id}", query=params))
+        return resources.UwListingCmsApp.parse(
+            self.request('patch', f"uw_listing_cms_apps/{resource_id}", query=params))
 
     def delete_uw_listing_cms_app(self, *, resource_id: str) -> bool:
         if not resource_id:
