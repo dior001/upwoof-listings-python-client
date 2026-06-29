@@ -35,6 +35,7 @@ disable = [
     "R0901", # too-many-ancestors (due to DSL class inheritance structure)
     "E1101", # no-member (request member in DSL mixins, provided by Client)
     "R0401", # cyclic-import (between upwoof_listings and its submodules)
+    "W0621", # redefined-outer-name (standard pytest fixture argument pattern)
 ]
 
 [tool.pylint.format]

@@ -40,7 +40,8 @@ class TestClient:
     def test_request_post_data(self, client):
         responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/listings/',
                       json={}, status=201)
-        client.request('post', 'listings/', query={'foo': 'bar'}, headers={'Content-Type': 'application/x-www-form-urlencoded'})
+        client.request('post', 'listings/', query={'foo': 'bar'},
+                       headers={'Content-Type': 'application/x-www-form-urlencoded'})
         assert responses.calls[0].request.body == 'foo=bar'
 
     @responses.activate
@@ -64,16 +65,18 @@ class TestClient:
 class TestResources:
     def test_resource_object_parsing(self):
         class MockResponse:
-            def json(self): return {'ID': '1', 'DATE_CREATED_UTC': '2023-01-01T00:00:00Z'}
-        
+            def json(self):
+                return {'ID': '1', 'DATE_CREATED_UTC': '2023-01-01T00:00:00Z'}
+
         listing = Listing.parse(MockResponse())
         assert listing.id == '1'
         assert isinstance(listing.date_created_utc, datetime)
 
     def test_resource_object_list_parsing(self):
         class MockResponse:
-            def json(self): return [{'ID': '1'}, {'ID': '2'}]
-        
+            def json(self):
+                return [{'ID': '1'}, {'ID': '2'}]
+
         listings = Listing.parse(MockResponse())
         assert len(listings) == 2
         assert listings[0].id == '1'
@@ -102,7 +105,8 @@ class TestResources:
 
     def test_resource_object_parse_none_json(self):
         class MockResponse:
-            def json(self): return "not a dict or list"
+            def json(self):
+                return "not a dict or list"
         assert Listing.parse(MockResponse()) is None
 
 class TestDSL:
@@ -197,7 +201,7 @@ class TestGlobalClient:
 
 class TestAllDSL:
     @responses.activate
-    def test_all_dsl_methods(self, client):
+    def test_all_dsl_methods(self, client):  # pylint: disable=too-many-statements
         # We'll just test one method from each to ensure coverage of the dsl/__init__.py
         methods = [
             ('get_pets', 'pets/'),
@@ -216,7 +220,7 @@ class TestAllDSL:
             responses.add(responses.GET, f'https://pethotels.upwoof.com/api/v1/{path}',
                           json=[], status=200)
             getattr(client, method_name)()
-        
+
         # Test all types of methods for one resource to cover the boilerplate
         res_types = [
             ('pet', 'pets'),
@@ -265,7 +269,8 @@ class TestAllDSL:
         responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/credit_notes/1/void', json={}, status=200)
         client.void_credit_note(resource_id='1')
 
-        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/invoices/1/pay_out_of_band', json={}, status=200)
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/invoices/1/pay_out_of_band',
+                      json={}, status=200)
         client.pay_invoice_out_of_band(resource_id='1')
 
     def test_blank_resource_id_raises(self, client):
@@ -283,94 +288,13 @@ class TestAllDSL:
                 with pytest.raises(ValueError, match="ID cannot be blank"):
                     method(**kwargs)
 
+        for method_name in ('void_credit_note', 'pay_invoice_out_of_band'):
+            with pytest.raises(ValueError, match="ID cannot be blank"):
+                getattr(client, method_name)(resource_id='')
+
     def test_resources_property(self, client):
         from upwoof_listings import resources
         assert client.resources == resources
-
-    def test_dsl_blank_id_errors(self, client):
-        with pytest.raises(ValueError):
-            client.get_pet(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_pet(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_pet(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_pet(resource_id='')
-        
-        with pytest.raises(ValueError):
-            client.void_credit_note(resource_id='')
-        with pytest.raises(ValueError):
-            client.pay_invoice_out_of_band(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_accommodation(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_accommodation(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_accommodation(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_accommodation(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_credit_note(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_credit_note(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_credit_note(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_credit_note(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_customer(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_customer(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_customer(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_customer(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_invoice(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_invoice(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_invoice(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_invoice(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_order(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_order(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_order(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_order(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_reservation(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_reservation(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_reservation(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_reservation(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_user(resource_id='')
-        with pytest.raises(ValueError):
-            client.update_user(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.patch_user(resource_id='', params={})
-        with pytest.raises(ValueError):
-            client.delete_user(resource_id='')
-
-        with pytest.raises(ValueError):
-            client.get_accommodation_type(resource_id='')
-        with pytest.raises(ValueError):
-            client.get_animal_type(resource_id='')
-        with pytest.raises(ValueError):
-            client.get_breed(resource_id='')
 
 def test_serializer_basic():
     from upwoof_listings.resources.object import Serializer
