@@ -19,7 +19,7 @@ my_vcr = vcr.VCR(
 
 @pytest.fixture
 def client():
-    return Client(api_key=API_KEY, url='https://staging.upwoof.com/api/v1/')
+    return Client(api_key=API_KEY, url='https://pethotels-staging.upwoof.com/api/v1/')
 
 class TestIntegration:
     @my_vcr.use_cassette('get_listings.yaml')
