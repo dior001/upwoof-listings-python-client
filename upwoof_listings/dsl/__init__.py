@@ -6,6 +6,7 @@ from .customers import CustomersDSL
 from .invoices import InvoicesDSL
 from .orders import OrdersDSL
 from .reservations import ReservationsDSL
+from .reviews import ReviewsDSL
 from .users import UsersDSL
 from .accommodation_types import AccommodationTypesDSL
 from .animal_types import AnimalTypesDSL
@@ -21,6 +22,7 @@ class DSL(
     InvoicesDSL,
     OrdersDSL,
     ReservationsDSL,
+    ReviewsDSL,
     UsersDSL,
     AccommodationTypesDSL,
     AnimalTypesDSL,

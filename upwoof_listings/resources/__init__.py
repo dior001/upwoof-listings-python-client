@@ -7,6 +7,7 @@ from .invoice import Invoice
 from .order import Order
 from .pet import Pet
 from .reservation import Reservation
+from .review import Review
 from .user import User
 from .accommodation_type import AccommodationType
 from .animal_type import AnimalType
