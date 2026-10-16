@@ -22,8 +22,3 @@ class ReservationsDSL:
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Reservation.parse(self.request('patch', f"reservations/{resource_id}", query=params))
-
-    def delete_reservation(self, *, resource_id: str) -> bool:
-        if not resource_id:
-            raise ValueError("ID cannot be blank")
-        return self.request('delete', f"reservations/{resource_id}").status_code == 204
