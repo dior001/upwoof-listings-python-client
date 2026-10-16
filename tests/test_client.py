@@ -237,6 +237,8 @@ class TestAllDSL:
             ('breed', 'breeds'),
             ('uw_listing_cms_app', 'uw_listing_cms_apps'),
         ]
+        # The API never exposed DELETE /reservations/{id}, so the client has no delete_reservation.
+        no_delete = {'reservation'}
         for single, plural in res_types:
             # get single
             responses.add(responses.GET, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
@@ -251,8 +253,9 @@ class TestAllDSL:
             responses.add(responses.PATCH, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
             getattr(client, f'patch_{single}')(resource_id='1', params={})
             # delete
-            responses.add(responses.DELETE, f'https://pethotels.upwoof.com/api/v1/{plural}/1', status=204)
-            getattr(client, f'delete_{single}')(resource_id='1')
+            if single not in no_delete:
+                responses.add(responses.DELETE, f'https://pethotels.upwoof.com/api/v1/{plural}/1', status=204)
+                getattr(client, f'delete_{single}')(resource_id='1')
 
         # Resource specific singletons
         responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/accommodation_types/1', json={}, status=200)
@@ -279,8 +282,10 @@ class TestAllDSL:
             'order', 'reservation', 'user', 'listing', 'accommodation_type',
             'animal_type', 'breed', 'uw_listing_cms_app',
         ]
+        no_delete = {'reservation'}
         for single in singles:
-            for prefix in ('get', 'update', 'patch', 'delete'):
+            prefixes = ('get', 'update', 'patch') if single in no_delete else ('get', 'update', 'patch', 'delete')
+            for prefix in prefixes:
                 method = getattr(client, f'{prefix}_{single}')
                 kwargs = {'resource_id': ''}
                 if prefix in ('update', 'patch'):
@@ -291,6 +296,11 @@ class TestAllDSL:
         for method_name in ('void_credit_note', 'pay_invoice_out_of_band'):
             with pytest.raises(ValueError, match="ID cannot be blank"):
                 getattr(client, method_name)(resource_id='')
+
+    def test_delete_reservation_removed(self, client):
+        # DELETE /reservations/{id} was removed from the API: confirm the client doesn't offer a
+        # method that would only ever 404.
+        assert not hasattr(client, 'delete_reservation')
 
     def test_resources_property(self, client):
         from upwoof_listings import resources
