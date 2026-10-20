@@ -276,6 +276,14 @@ class TestAllDSL:
                       json={}, status=200)
         client.pay_invoice_out_of_band(resource_id='1')
 
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/orders/1/apply_promo_code',
+                      json={}, status=200)
+        client.apply_promo_code(resource_id='1', code='SAVE10')
+
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/orders/1/redeem_gift_card',
+                      json={}, status=200)
+        client.redeem_gift_card(resource_id='1', code='GIFT123')
+
     def test_blank_resource_id_raises(self, client):
         singles = [
             'pet', 'accommodation', 'credit_note', 'customer', 'invoice',
@@ -296,6 +304,12 @@ class TestAllDSL:
         for method_name in ('void_credit_note', 'pay_invoice_out_of_band'):
             with pytest.raises(ValueError, match="ID cannot be blank"):
                 getattr(client, method_name)(resource_id='')
+
+        for method_name in ('apply_promo_code', 'redeem_gift_card'):
+            with pytest.raises(ValueError, match="ID cannot be blank"):
+                getattr(client, method_name)(resource_id='', code='SAVE10')
+            with pytest.raises(ValueError, match="Code cannot be blank"):
+                getattr(client, method_name)(resource_id='1', code='')
 
     def test_delete_reservation_removed(self, client):
         # DELETE /reservations/{id} was removed from the API: confirm the client doesn't offer a
