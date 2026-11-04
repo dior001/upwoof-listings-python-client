@@ -12,6 +12,7 @@ from .accommodation_types import AccommodationTypesDSL
 from .animal_types import AnimalTypesDSL
 from .breeds import BreedsDSL
 from .uw_listing_cms_apps import UwListingCmsAppsDSL
+from .vaccination_records import VaccinationRecordsDSL
 from .waiver_signatures import WaiverSignaturesDSL
 
 class DSL(
@@ -29,6 +30,7 @@ class DSL(
     AnimalTypesDSL,
     BreedsDSL,
     UwListingCmsAppsDSL,
+    VaccinationRecordsDSL,
     WaiverSignaturesDSL
 ):
     @property
