@@ -14,6 +14,7 @@ from .breeds import BreedsDSL
 from .uw_listing_cms_apps import UwListingCmsAppsDSL
 from .vaccination_records import VaccinationRecordsDSL
 from .waiver_signatures import WaiverSignaturesDSL
+from .report_cards import ReportCardsDSL
 
 class DSL(
     ListingsDSL,
@@ -31,7 +32,8 @@ class DSL(
     BreedsDSL,
     UwListingCmsAppsDSL,
     VaccinationRecordsDSL,
-    WaiverSignaturesDSL
+    WaiverSignaturesDSL,
+    ReportCardsDSL
 ):
     @property
     def resources(self):

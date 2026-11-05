@@ -15,3 +15,4 @@ from .breed import Breed
 from .uw_listing_cms_app import UwListingCmsApp
 from .vaccination_record import VaccinationRecord
 from .waiver_signature import WaiverSignature
+from .report_card import ReportCard
