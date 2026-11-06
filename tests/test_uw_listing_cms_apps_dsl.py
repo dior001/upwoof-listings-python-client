@@ -66,3 +66,36 @@ class TestUwListingCmsAppsDSL:
     def test_delete_uw_listing_cms_app_no_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
             client.delete_uw_listing_cms_app(resource_id='')
+
+    @responses.activate
+    def test_setup_complete_uw_listing_cms_app(self, client):
+        responses.add(responses.PUT, 'https://pethotels.upwoof.com/api/v1/uw_listing_cms_apps/1/setup_complete',
+                      json={'ID': 1, 'APP_ID': 'app_1', 'WORKFLOW_STATE': 'operational'}, status=200)
+        app = client.setup_complete_uw_listing_cms_app(resource_id='1')
+        assert app.id == 1
+        assert app.workflow_state == 'operational'
+
+    def test_setup_complete_uw_listing_cms_app_no_id(self, client):
+        with pytest.raises(ValueError, match="ID cannot be blank"):
+            client.setup_complete_uw_listing_cms_app(resource_id='')
+
+    @responses.activate
+    def test_setup_completion_failure_uw_listing_cms_app(self, client):
+        url = 'https://pethotels.upwoof.com/api/v1/uw_listing_cms_apps/1/setup_completion_failure'
+        responses.add(responses.PUT, url,
+                      json={'ID': 1, 'APP_ID': 'app_1', 'WORKFLOW_STATE': 'setup_completion_failed'}, status=200)
+        app = client.setup_completion_failure_uw_listing_cms_app(resource_id='1', params={'error': 'host unreachable'})
+        assert app.id == 1
+        assert app.workflow_state == 'setup_completion_failed'
+
+    @responses.activate
+    def test_setup_completion_failure_uw_listing_cms_app_no_params(self, client):
+        url = 'https://pethotels.upwoof.com/api/v1/uw_listing_cms_apps/1/setup_completion_failure'
+        responses.add(responses.PUT, url,
+                      json={'ID': 1, 'APP_ID': 'app_1', 'WORKFLOW_STATE': 'setup_completion_failed'}, status=200)
+        app = client.setup_completion_failure_uw_listing_cms_app(resource_id='1')
+        assert app.workflow_state == 'setup_completion_failed'
+
+    def test_setup_completion_failure_uw_listing_cms_app_no_id(self, client):
+        with pytest.raises(ValueError, match="ID cannot be blank"):
+            client.setup_completion_failure_uw_listing_cms_app(resource_id='')
