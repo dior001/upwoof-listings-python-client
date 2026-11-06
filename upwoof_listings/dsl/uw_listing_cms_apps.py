@@ -28,3 +28,16 @@ class UwListingCmsAppsDSL:
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return self.request('delete', f"uw_listing_cms_apps/{resource_id}").status_code == 204
+
+    def setup_complete_uw_listing_cms_app(self, *, resource_id: str) -> resources.UwListingCmsApp:
+        if not resource_id:
+            raise ValueError("ID cannot be blank")
+        return resources.UwListingCmsApp.parse(
+            self.request('put', f"uw_listing_cms_apps/{resource_id}/setup_complete"))
+
+    def setup_completion_failure_uw_listing_cms_app(
+            self, *, resource_id: str, params: Optional[Dict[str, Any]] = None) -> resources.UwListingCmsApp:
+        if not resource_id:
+            raise ValueError("ID cannot be blank")
+        return resources.UwListingCmsApp.parse(
+            self.request('put', f"uw_listing_cms_apps/{resource_id}/setup_completion_failure", query=params))
