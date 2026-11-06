@@ -12,3 +12,8 @@ class ReviewsDSL:
         if not reservation_id:
             raise ValueError("ID cannot be blank")
         return resources.Review.parse(self.request('post', f"reservations/{reservation_id}/review", query=params))
+
+    def respond_to_review(self, *, listing_id: str, params: Dict[str, Any]) -> resources.Review:
+        if not listing_id:
+            raise ValueError("ID cannot be blank")
+        return resources.Review.parse(self.request('post', f"listings/{listing_id}/review_response", query=params))

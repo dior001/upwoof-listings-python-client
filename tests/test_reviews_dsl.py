@@ -26,6 +26,14 @@ class TestReviewsDSL:
         assert review.rating == 4
         assert review.reservation_id == 1
 
+    @responses.activate
+    def test_respond_to_review(self, client):
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/listings/1/review_response',
+                      json={'ID': 2, 'RESPONSE_BODY': 'Thank you!'}, status=200)
+        review = client.respond_to_review(listing_id='1', params={'review_id': 2, 'response_body': 'Thank you!'})
+        assert review.id == 2
+        assert review.response_body == 'Thank you!'
+
     def test_get_listing_reviews_no_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
             client.get_listing_reviews(listing_id='')
@@ -33,3 +41,7 @@ class TestReviewsDSL:
     def test_create_reservation_review_no_id(self, client):
         with pytest.raises(ValueError, match="ID cannot be blank"):
             client.create_reservation_review(reservation_id='', params={'rating': 5})
+
+    def test_respond_to_review_no_id(self, client):
+        with pytest.raises(ValueError, match="ID cannot be blank"):
+            client.respond_to_review(listing_id='', params={'review_id': 2, 'response_body': 'Thank you!'})
