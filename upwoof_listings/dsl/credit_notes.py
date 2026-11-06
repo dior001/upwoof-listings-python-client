@@ -18,16 +18,6 @@ class CreditNotesDSL:
     def create_credit_note(self, *, params: Dict[str, Any]) -> resources.CreditNote:
         return resources.CreditNote.parse(self.request('post', 'credit_notes/', query=params))
 
-    def update_credit_note(self, *, resource_id: str, params: Dict[str, Any]) -> resources.CreditNote:
-        if not resource_id:
-            raise ValueError("ID cannot be blank")
-        return resources.CreditNote.parse(self.request('put', f"credit_notes/{resource_id}", query=params))
-
-    def patch_credit_note(self, *, resource_id: str, params: Dict[str, Any]) -> resources.CreditNote:
-        if not resource_id:
-            raise ValueError("ID cannot be blank")
-        return resources.CreditNote.parse(self.request('patch', f"credit_notes/{resource_id}", query=params))
-
     def delete_credit_note(self, *, resource_id: str) -> bool:
         if not resource_id:
             raise ValueError("ID cannot be blank")
