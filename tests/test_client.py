@@ -239,6 +239,10 @@ class TestAllDSL:
         ]
         # The API never exposed DELETE /reservations/{id}, so the client has no delete_reservation.
         no_delete = {'reservation'}
+        # A credit note is immutable after creation (void/delete are its only state changes), and
+        # PUT/PATCH /credit_notes/{id} were never real routes, so the client has no
+        # update_credit_note/patch_credit_note.
+        no_update_patch = {'credit_note'}
         for single, plural in res_types:
             # get single
             responses.add(responses.GET, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
@@ -247,11 +251,12 @@ class TestAllDSL:
             responses.add(responses.POST, f'https://pethotels.upwoof.com/api/v1/{plural}/', json={}, status=201)
             getattr(client, f'create_{single}')(params={})
             # update
-            responses.add(responses.PUT, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
-            getattr(client, f'update_{single}')(resource_id='1', params={})
-            # patch
-            responses.add(responses.PATCH, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
-            getattr(client, f'patch_{single}')(resource_id='1', params={})
+            if single not in no_update_patch:
+                responses.add(responses.PUT, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
+                getattr(client, f'update_{single}')(resource_id='1', params={})
+                # patch
+                responses.add(responses.PATCH, f'https://pethotels.upwoof.com/api/v1/{plural}/1', json={}, status=200)
+                getattr(client, f'patch_{single}')(resource_id='1', params={})
             # delete
             if single not in no_delete:
                 responses.add(responses.DELETE, f'https://pethotels.upwoof.com/api/v1/{plural}/1', status=204)
@@ -291,8 +296,11 @@ class TestAllDSL:
             'animal_type', 'breed', 'uw_listing_cms_app',
         ]
         no_delete = {'reservation'}
+        no_update_patch = {'credit_note'}
         for single in singles:
             prefixes = ('get', 'update', 'patch') if single in no_delete else ('get', 'update', 'patch', 'delete')
+            if single in no_update_patch:
+                prefixes = tuple(prefix for prefix in prefixes if prefix not in ('update', 'patch'))
             for prefix in prefixes:
                 method = getattr(client, f'{prefix}_{single}')
                 kwargs = {'resource_id': ''}
@@ -315,6 +323,13 @@ class TestAllDSL:
         # DELETE /reservations/{id} was removed from the API: confirm the client doesn't offer a
         # method that would only ever 404.
         assert not hasattr(client, 'delete_reservation')
+
+    def test_update_and_patch_credit_note_removed(self, client):
+        # PUT/PATCH /credit_notes/{id} were never real routes (a credit note is immutable after
+        # creation -- void/delete are its only state changes): confirm the client doesn't offer
+        # methods that would only ever 404.
+        assert not hasattr(client, 'update_credit_note')
+        assert not hasattr(client, 'patch_credit_note')
 
     def test_resources_property(self, client):
         from upwoof_listings import resources
