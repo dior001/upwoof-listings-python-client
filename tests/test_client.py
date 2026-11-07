@@ -192,6 +192,26 @@ class TestDSL:
                       status=204)
         assert client.delete_listing(resource_id='1') is True
 
+    @responses.activate
+    def test_get_listing_capacity(self, client):
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/1/capacity',
+                      json={'current_dogs': 2, 'max_dogs': 5, 'current_cats': 1, 'max_cats': 3,
+                            'available_dogs': 3, 'available_cats': 2}, status=200)
+        capacity = client.get_listing_capacity(listing_id='1')
+        assert capacity.current_dogs == 2
+        assert capacity.available_cats == 2
+
+    @responses.activate
+    def test_get_listing_capacity_with_date(self, client):
+        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/1/capacity',
+                      json={'current_dogs': 0}, status=200)
+        client.get_listing_capacity(listing_id='1', date='2026-01-01')
+        assert 'date=2026-01-01' in responses.calls[0].request.url
+
+    def test_get_listing_capacity_blank_id(self, client):
+        with pytest.raises(ValueError, match="ID cannot be blank"):
+            client.get_listing_capacity(listing_id='')
+
 class TestGlobalClient:
     def test_global_client_init(self):
         upwoof_listings.api_key = 'global_key'

@@ -27,3 +27,12 @@ class ListingsDSL:
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return self.request('delete', f"listings/{resource_id}").status_code == 204
+
+    def get_listing_capacity(self, *, listing_id: str,
+                             date: Optional[str] = None) -> resources.ResourceObject:
+        """Return current pet counts vs. configured capacity limits for a listing, optionally
+        for a specific date (defaults to today on the server side)."""
+        if not listing_id:
+            raise ValueError("ID cannot be blank")
+        query = {'date': date} if date else None
+        return resources.ResourceObject.parse(self.request('get', f"listings/{listing_id}/capacity", query=query))
