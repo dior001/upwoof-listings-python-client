@@ -14,11 +14,19 @@ class ReservationsDSL:
         return resources.Reservation.parse(self.request('post', 'reservations/', query=params))
 
     def update_reservation(self, *, resource_id: str, params: Dict[str, Any]) -> resources.Reservation:
+        """Update a reservation. Changing `when_reservation_start`/`when_reservation_finish` runs the
+        same availability check as the listing manager, rebuilds the order and fires
+        `reservation.duration_changed` (and its webhook). A refused change raises ValidationError
+        (HTTP 422) with the API's reasons in `errors`."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Reservation.parse(self.request('put', f"reservations/{resource_id}", query=params))
 
     def patch_reservation(self, *, resource_id: str, params: Dict[str, Any]) -> resources.Reservation:
+        """Partially update a reservation. Changing `when_reservation_start`/`when_reservation_finish` runs the
+        same availability check as the listing manager, rebuilds the order and fires
+        `reservation.duration_changed` (and its webhook). A refused change raises ValidationError
+        (HTTP 422) with the API's reasons in `errors`."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Reservation.parse(self.request('patch', f"reservations/{resource_id}", query=params))
