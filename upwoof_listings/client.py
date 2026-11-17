@@ -40,7 +40,7 @@ class Client(DSL):
                 kwargs['json'] = query
             else:
                 kwargs['data'] = query
-        elif method == 'get' and query:
+        elif method in ['get', 'delete'] and query:
             kwargs['params'].update(self._clamp_per_page(query))
 
         response = self.session.request(method, full_url, **kwargs)

@@ -1,29 +1,38 @@
 import json
 
 
-def _errors_from(response):
-    """The `errors` list from an API error body (`{"errors": [...]}`), else an empty list."""
+def _body_from(response):
+    """The parsed JSON error body, or None when there is none."""
     if response is None:
-        return []
+        return None
     try:
-        body = response.json()
+        return response.json()
     except (ValueError, AttributeError):
         try:
-            body = json.loads(response.text)
+            return json.loads(response.text)
         except (ValueError, TypeError, AttributeError):
-            return []
-    if not isinstance(body, dict) or 'errors' not in body:
+            return None
+
+
+def _errors_from(body):
+    """The API's messages from an error body: its `errors` list (a dict of messages keyed by field gives its
+    values), else its single `message` (`{"error": ..., "message": ...}`), else an empty list."""
+    if not isinstance(body, dict):
         return []
-    found = body['errors']
+    found = body.get('errors')
     if found is None:
-        return []
+        message = body.get('message')
+        return [message] if message else []
+    if isinstance(found, dict):
+        return list(found.values())
     return list(found) if isinstance(found, (list, tuple)) else [found]
 
 
 class ClientError(Exception):
     def __init__(self, response=None):
         self.response = response
-        self.errors = _errors_from(response)
+        self.body = _body_from(response)
+        self.errors = _errors_from(self.body)
         super().__init__(f"Client error: {response.status_code if response is not None else 'Unknown'}")
 
 

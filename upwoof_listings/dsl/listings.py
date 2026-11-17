@@ -14,11 +14,19 @@ class ListingsDSL:
         return resources.Listing.parse(self.request('post', 'listings/', query=params))
 
     def update_listing(self, *, resource_id: str, params: Dict[str, Any]) -> resources.Listing:
+        """Update a listing. `params` may also set `google_review_url`, `yelp_review_url` and
+        `facebook_review_url`: https only, on that site's own hosts, at most 500 characters, a blank string
+        removes it (an invalid one raises ValidationError, HTTP 422). Sending any of the three needs an
+        owner/manager of the listing (else ClientError, HTTP 403)."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Listing.parse(self.request('put', f"listings/{resource_id}", query=params))
 
     def patch_listing(self, *, resource_id: str, params: Dict[str, Any]) -> resources.Listing:
+        """Partially update a listing. `params` may also set `google_review_url`, `yelp_review_url` and
+        `facebook_review_url`: https only, on that site's own hosts, at most 500 characters, a blank string
+        removes it (an invalid one raises ValidationError, HTTP 422). Sending any of the three needs an
+        owner/manager of the listing (else ClientError, HTTP 403)."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Listing.parse(self.request('patch', f"listings/{resource_id}", query=params))
