@@ -15,6 +15,14 @@ from .uw_listing_cms_apps import UwListingCmsAppsDSL
 from .vaccination_records import VaccinationRecordsDSL
 from .waiver_signatures import WaiverSignaturesDSL
 from .report_cards import ReportCardsDSL
+from .pet_evaluations import PetEvaluationsDSL
+from .store_credits import StoreCreditsDSL
+from .pricing_rules import PricingRulesDSL
+from .membership_plans import MembershipPlansDSL
+from .custom_fields import CustomFieldsDSL
+from .special_opening_hours import SpecialOpeningHoursDSL
+from .notification_templates import NotificationTemplatesDSL
+from .training_courses import TrainingCoursesDSL
 
 class DSL(
     ListingsDSL,
@@ -33,7 +41,15 @@ class DSL(
     UwListingCmsAppsDSL,
     VaccinationRecordsDSL,
     WaiverSignaturesDSL,
-    ReportCardsDSL
+    ReportCardsDSL,
+    PetEvaluationsDSL,
+    StoreCreditsDSL,
+    PricingRulesDSL,
+    MembershipPlansDSL,
+    CustomFieldsDSL,
+    SpecialOpeningHoursDSL,
+    NotificationTemplatesDSL,
+    TrainingCoursesDSL
 ):
     @property
     def resources(self):

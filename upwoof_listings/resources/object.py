@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 from dateutil import parser
 
 class Serializer:
@@ -22,8 +22,8 @@ class TimeSerializer:
         return value.isoformat()
 
     @staticmethod
-    def deserialize(value: str) -> datetime:
-        return parser.parse(value)
+    def deserialize(value: Optional[str]) -> Optional[datetime]:
+        return parser.parse(value) if value else None
 
 class ResourceObject:
     _attributes = {

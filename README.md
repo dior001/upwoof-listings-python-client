@@ -25,6 +25,86 @@ client = upwoof_listings.get_client()
 listings = client.get_listings()
 ```
 
+### Errors
+
+Every non-2xx response raises a `upwoof_listings.errors.ClientError` carrying the `response`, its parsed JSON
+`body` (None when there is none) and the API's messages in `errors`: the body's `errors` list (a dict of
+messages keyed by field gives its values), else its single `message`, else an empty list. Two subclasses
+narrow it:
+
+* `ResourceNotFoundError` (HTTP 404). `redeem_gift_card` answers 404 for any code that isn't a usable gift
+  card for the order's listing (unknown, expired, used up or another listing's), the same for each.
+* `ValidationError` (HTTP 422): the API refused the request. Changing a reservation's dates through
+  `update_reservation`/`patch_reservation` runs the availability check, rebuilds the order and fires
+  `reservation.duration_changed`; a date change it refuses raises this, with the reasons in `errors`.
+
+A refused custom field answer (`update_customer_custom_fields`/`update_pet_custom_fields`/
+`update_reservation_custom_fields`) raises `ValidationError` with `body['unknown_custom_field_ids']` and
+`body['errors']` (messages keyed by field definition id); nothing is saved.
+
+```python
+from upwoof_listings.errors import ValidationError
+
+try:
+    client.patch_reservation(resource_id='42', params={'when_reservation_finish': '2026-12-20'})
+except ValidationError as error:
+    print(error.errors)
+```
+
+### Pagination
+
+List methods take `page` and `per_page` params. The API returns at most 100 records a page (default 20),
+so the client never asks for more: a larger `per_page` is sent as 100 (`Client.MAX_PER_PAGE`).
+
+### Resources
+
+Besides the CRUD methods for each core resource (`get_<resources>`, `get_<resource>`, `create_<resource>`,
+`update_<resource>`, `patch_<resource>`, `delete_<resource>`), the client wraps:
+
+* Pet evaluations: `get_pet_evaluations`, `get_pet_evaluation`, `create_reservation_pet_evaluation`.
+* Pet deactivation: `deactivate_pet` (`passed_away`, `rehomed` or `other`), `reactivate_pet`. Booking an inactive
+  pet (`create_reservation`, or `update_reservation` when every pet is inactive) raises `ValidationError`.
+* Store credit: `get_customer_store_credit`, `get_customer_store_credit_transactions`,
+  `adjust_customer_store_credit` (owner/manager with two-factor authentication on).
+* Pricing rules (owner/manager): `get_listing_pricing_rules`, `get_listing_pricing_rule`,
+  `create_listing_pricing_rule`, `patch_listing_pricing_rule`, `delete_listing_pricing_rule`.
+* Membership plans (read only): `get_listing_membership_plans`, `get_listing_membership_plan`. Invoice line
+  items carry `discount` and `order_line_item_type` (e.g. `MembershipDiscountOrderLineItem`).
+* Custom fields: `get_listing_custom_field_definitions`, `update_customer_custom_fields`,
+  `update_pet_custom_fields`, `update_reservation_custom_fields`. Customers, pets and reservations carry their
+  answers in `custom_fields`.
+* Special opening hours: `get_listing_special_opening_hours`.
+* Notification wording (owner/manager): `get_listing_notification_templates`,
+  `update_listing_notification_template`, `delete_listing_notification_template`.
+* Training: `get_training_courses`, `get_training_course`, `get_training_course_sessions`,
+  `get_training_course_enrollments`, `create_training_course_enrollment`, `get_training_course_waitlist_entries`,
+  `get_training_enrollment`, `cancel_training_enrollment`.
+* Review page links: `update_listing`/`patch_listing` accept `google_review_url`, `yelp_review_url` and
+  `facebook_review_url` (owner/manager), which listings return.
+* `get_order` also returns the order a standalone grooming appointment or private lesson is billed on.
+
+### Verifying webhooks
+
+Each webhook delivery carries `X-Upwoof-Timestamp` (Unix seconds) and `X-Upwoof-Timestamped-Signature`
+(`Base64(HMAC-SHA256(secret, "<timestamp>.<body>"))`) alongside the body-only `X-Upwoof-Signature`.
+Verify the timestamped one against the raw request body; it also rejects a delivery more than five minutes
+old (or ahead), so a captured request can't be replayed:
+
+```python
+from upwoof_listings import webhooks
+
+if not webhooks.verify_timestamped_signature(
+        raw_body, headers[webhooks.TIMESTAMP_HEADER],
+        headers[webhooks.TIMESTAMPED_SIGNATURE_HEADER], secret):  # tolerance=300 by default
+    return 400
+```
+
+`webhooks.verify_signature(raw_body, headers[webhooks.SIGNATURE_HEADER], secret)` still checks the
+body-only signature.
+
+A `store_credit.balance_changed` event (one delivery per store credit ledger movement, `data` the store credit
+transaction) joins the reservation, invoice and credit note events a subscription can choose.
+
 ## Documentation
 
 https://pethotels.upwoof.com/api-docs/v1

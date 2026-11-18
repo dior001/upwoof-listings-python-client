@@ -16,3 +16,15 @@ from .uw_listing_cms_app import UwListingCmsApp
 from .vaccination_record import VaccinationRecord
 from .waiver_signature import WaiverSignature
 from .report_card import ReportCard
+from .pet_evaluation import PetEvaluation
+from .store_credit_account import StoreCreditAccount
+from .store_credit_transaction import StoreCreditTransaction
+from .pricing_rule import PricingRule
+from .membership_plan import MembershipPlan
+from .custom_field_definition import CustomFieldDefinition
+from .special_opening_hour import SpecialOpeningHour
+from .notification_template_override import NotificationTemplateOverride
+from .training_course import TrainingCourse
+from .training_class_session import TrainingClassSession
+from .training_enrollment import TrainingEnrollment
+from .training_waitlist_entry import TrainingWaitlistEntry
