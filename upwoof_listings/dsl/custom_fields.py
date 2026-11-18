@@ -5,7 +5,8 @@ class CustomFieldsDSL:
     def get_listing_custom_field_definitions(self, *, listing_id: str, params: Optional[Dict[str, Any]] = None
                                              ) -> List[resources.CustomFieldDefinition]:
         """A listing's own custom fields plus its listing group's group-wide ones. Optional `record_type`
-        (customer, pet, reservation, incident_report), `page`, `per_page` in `params`."""
+        (customer, pet, reservation, incident_report,
+        stay_feedback), `page`, `per_page` in `params`."""
         if not listing_id:
             raise ValueError("ID cannot be blank")
         path = f"listings/{listing_id}/custom_field_definitions"

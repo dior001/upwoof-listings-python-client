@@ -3,6 +3,8 @@ from .. import resources
 
 class CustomersDSL:
     def get_customers(self, params: Optional[Dict[str, Any]] = None) -> List[resources.Customer]:
+        """`customer_tag_id` in `params` keeps only customers carrying that tag (one of the queried listings'
+        own; any other id gives an empty page). Each customer carries `customer_tags`."""
         return resources.Customer.parse(self.request('get', 'customers/', query=params))
 
     def get_customer(self, *, resource_id: str) -> resources.Customer:
