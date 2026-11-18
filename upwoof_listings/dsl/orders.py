@@ -6,9 +6,10 @@ class OrdersDSL:
         return resources.Order.parse(self.request('get', 'orders/', query=params))
 
     def get_order(self, *, resource_id: str) -> resources.Order:
-        """Get an order. This includes the order a standalone grooming appointment or private lesson (no
-        reservation) is billed on, at one of the caller's listings; such an order can't be changed or deleted
-        through the API (ClientError, HTTP 403)."""
+        """Get any order get_orders lists, including one with no reservation, groom or lesson behind it (such
+        as one made with create_order). This includes the order a standalone grooming appointment or private
+        lesson (no reservation) is billed on, at one of the caller's listings; such an order can't be changed
+        or deleted through the API (ClientError, HTTP 403)."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Order.parse(self.request('get', f"orders/{resource_id}"))

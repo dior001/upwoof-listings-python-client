@@ -41,7 +41,7 @@ class Client(DSL):
             else:
                 kwargs['data'] = query
         elif method in ['get', 'delete'] and query:
-            kwargs['params'].update(self._clamp_per_page(query))
+            kwargs['params'].update(self._bracket_lists(self._clamp_per_page(query)))
 
         response = self.session.request(method, full_url, **kwargs)
 
@@ -52,6 +52,12 @@ class Client(DSL):
         if response.status_code == 422:
             raise errors.ValidationError(response=response)
         raise errors.ClientError(response=response)
+
+    @staticmethod
+    def _bracket_lists(query: Dict[str, Any]) -> Dict[str, Any]:
+        # The API (Rack) reads a list from `key[]=1&key[]=2`; a bare repeated `key` keeps only the last value.
+        return {(f"{key}[]" if isinstance(value, (list, tuple)) and not key.endswith('[]') else key): value
+                for key, value in query.items()}
 
     @classmethod
     def _clamp_per_page(cls, query: Dict[str, Any]) -> Dict[str, Any]:
