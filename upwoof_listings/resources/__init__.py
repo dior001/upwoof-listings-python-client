@@ -37,3 +37,8 @@ from .grooming_open_times import GroomingOpenTimes
 from .play_yard import PlayYard
 from .playgroup_assignment import PlaygroupAssignment
 from .report_card_photo import ReportCardPhoto
+from .authorized_pickup import AuthorizedPickup
+from .customer_tag import CustomerTag
+from .customer_tagging import CustomerTagging
+from .stay_product import StayProduct
+from .reservation_retail_item import ReservationRetailItem

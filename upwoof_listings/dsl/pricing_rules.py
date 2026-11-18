@@ -21,7 +21,9 @@ class PricingRulesDSL:
 
     def create_listing_pricing_rule(self, *, listing_id: str, params: Dict[str, Any]) -> resources.PricingRule:
         """`name` required. A rule needs at least one condition (animal_type_id, breed_ids, min_age_months,
-        max_age_months, customer_id, or neuter_status other than any_status); a refused rule raises
+        max_age_months, customer_id, customer_tag_ids (the listing's own tags), minimum_nights, minimum_pets,
+        minimum_weight_lbs, or neuter_status other than any_status); `stacking_mode` is one of standard, stack,
+        override, best_of, exclusive_stay_adjustment. A refused rule (including another listing's tag) raises
         ValidationError (HTTP 422)."""
         if not listing_id:
             raise ValueError("ID cannot be blank")
@@ -30,7 +32,8 @@ class PricingRulesDSL:
 
     def patch_listing_pricing_rule(self, *, listing_id: str, pricing_rule_id: str,
                                    params: Dict[str, Any]) -> resources.PricingRule:
-        """Changes only the fields sent; send None to clear an optional one."""
+        """Changes only the fields sent; send None to clear an optional one (an empty `customer_tag_ids`
+        clears the tag condition)."""
         if not listing_id or not pricing_rule_id:
             raise ValueError("ID cannot be blank")
         path = f"listings/{listing_id}/pricing_rules/{pricing_rule_id}"

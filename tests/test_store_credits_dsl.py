@@ -35,6 +35,14 @@ class TestStoreCreditsDSL:
                                                                      params={'page': 2})
         assert transactions[0].entry_type == 'redemption'
 
+    @pytest.mark.parametrize('entry_type', ['loyalty_conversion', 'deposit_overpayment', 'group_departure'])
+    @responses.activate
+    def test_get_customer_store_credit_transactions_new_entry_types(self, client, entry_type):
+        responses.add(responses.GET, f"{BASE}customers/2/store_credit/transactions", status=200,
+                      json=[{'id': 10, 'amount_cents': 500, 'entry_type': entry_type}])
+        transactions = client.get_customer_store_credit_transactions(customer_id='2', listing_id='1')
+        assert transactions[0].entry_type == entry_type
+
     @responses.activate
     def test_adjust_customer_store_credit(self, client):
         params = {'listing_id': 1, 'amount_cents': 1500, 'reason': 'Goodwill'}

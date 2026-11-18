@@ -26,6 +26,16 @@ class TestCustomFieldsDSL:
         definitions = client.get_listing_custom_field_definitions(listing_id='1', params={'record_type': 'pet'})
         assert definitions[0].label == 'Microchip'
 
+    @responses.activate
+    def test_get_listing_stay_feedback_custom_field_definitions(self, client):
+        responses.add(responses.GET, f"{BASE}listings/1/custom_field_definitions", status=200,
+                      match=[matchers.query_param_matcher({'access_token': 'test_key',
+                                                           'record_type': 'stay_feedback'})],
+                      json=[{'id': 8, 'label': 'Would you return?', 'record_type': 'stay_feedback'}])
+        definitions = client.get_listing_custom_field_definitions(listing_id='1',
+                                                                  params={'record_type': 'stay_feedback'})
+        assert definitions[0].record_type == 'stay_feedback'
+
     @pytest.mark.parametrize('method, collection', [
         ('update_customer_custom_fields', 'customers'),
         ('update_pet_custom_fields', 'pets'),

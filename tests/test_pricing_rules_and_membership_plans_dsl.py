@@ -35,6 +35,18 @@ class TestPricingRulesDSL:
         assert client.create_listing_pricing_rule(listing_id='1', params=params).name == 'Big dogs'
 
     @responses.activate
+    def test_create_listing_pricing_rule_with_stay_and_tag_conditions(self, client):
+        params = {'name': 'Long VIP stays', 'customer_tag_ids': [5], 'minimum_nights': 7, 'minimum_pets': 2,
+                  'minimum_weight_lbs': 40.5, 'stacking_mode': 'exclusive_stay_adjustment'}
+        responses.add(responses.POST, f"{BASE}listings/1/pricing_rules", status=201,
+                      match=[matchers.json_params_matcher(params)],
+                      json={'id': 5, 'customer_tag_ids': [5], 'minimum_nights': 7, 'minimum_pets': 2,
+                            'minimum_weight_lbs': 40.5, 'stacking_mode': 'exclusive_stay_adjustment'})
+        rule = client.create_listing_pricing_rule(listing_id='1', params=params)
+        assert rule.customer_tag_ids == [5]
+        assert rule.minimum_weight_lbs == 40.5
+
+    @responses.activate
     def test_create_listing_pricing_rule_needs_a_condition(self, client):
         responses.add(responses.POST, f"{BASE}listings/1/pricing_rules", status=422,
                       json={'errors': ['A rule needs at least one condition']})
