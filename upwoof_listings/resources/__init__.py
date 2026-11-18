@@ -28,3 +28,12 @@ from .training_course import TrainingCourse
 from .training_class_session import TrainingClassSession
 from .training_enrollment import TrainingEnrollment
 from .training_waitlist_entry import TrainingWaitlistEntry
+from .card_reader import CardReader
+from .terminal_payment import TerminalPayment
+from .service_type import ServiceType
+from .groomer import Groomer
+from .grooming_appointment import GroomingAppointment
+from .grooming_open_times import GroomingOpenTimes
+from .play_yard import PlayYard
+from .playgroup_assignment import PlaygroupAssignment
+from .report_card_photo import ReportCardPhoto

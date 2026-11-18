@@ -23,6 +23,9 @@ from .custom_fields import CustomFieldsDSL
 from .special_opening_hours import SpecialOpeningHoursDSL
 from .notification_templates import NotificationTemplatesDSL
 from .training_courses import TrainingCoursesDSL
+from .card_readers import CardReadersDSL
+from .grooming import GroomingDSL
+from .play_yards import PlayYardsDSL
 
 class DSL(
     ListingsDSL,
@@ -49,7 +52,10 @@ class DSL(
     CustomFieldsDSL,
     SpecialOpeningHoursDSL,
     NotificationTemplatesDSL,
-    TrainingCoursesDSL
+    TrainingCoursesDSL,
+    CardReadersDSL,
+    GroomingDSL,
+    PlayYardsDSL
 ):
     @property
     def resources(self):
