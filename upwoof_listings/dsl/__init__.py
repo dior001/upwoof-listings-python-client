@@ -29,6 +29,8 @@ from .play_yards import PlayYardsDSL
 from .authorized_pickups import AuthorizedPickupsDSL
 from .customer_tags import CustomerTagsDSL
 from .stay_products import StayProductsDSL
+from .invoice_payments import InvoicePaymentsDSL
+from .attendance_confirmations import AttendanceConfirmationsDSL
 
 class DSL(
     ListingsDSL,
@@ -61,7 +63,9 @@ class DSL(
     PlayYardsDSL,
     AuthorizedPickupsDSL,
     CustomerTagsDSL,
-    StayProductsDSL
+    StayProductsDSL,
+    InvoicePaymentsDSL,
+    AttendanceConfirmationsDSL
 ):
     @property
     def resources(self):

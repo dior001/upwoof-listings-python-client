@@ -16,6 +16,10 @@ class CreditNotesDSL:
         return resources.CreditNote.parse(self.request('post', f"credit_notes/{resource_id}/void"))
 
     def create_credit_note(self, *, params: Dict[str, Any]) -> resources.CreditNote:
+        """For a paid invoice taken in parts (cash, check or card reader parts), `invoice_payment_id` is required:
+        the part (from `get_invoice_payments`) the refund goes back through. Omitting it, or naming more than the
+        part has left to refund, raises ValidationError (HTTP 422); a part that isn't the invoice's own raises
+        ResourceNotFoundError."""
         return resources.CreditNote.parse(self.request('post', 'credit_notes/', query=params))
 
     def delete_credit_note(self, *, resource_id: str) -> bool:
