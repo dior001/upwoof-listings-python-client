@@ -42,3 +42,5 @@ from .customer_tag import CustomerTag
 from .customer_tagging import CustomerTagging
 from .stay_product import StayProduct
 from .reservation_retail_item import ReservationRetailItem
+from .invoice_payment import InvoicePayment
+from .attendance_confirmation import AttendanceConfirmation
