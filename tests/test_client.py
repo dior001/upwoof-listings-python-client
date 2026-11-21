@@ -212,6 +212,21 @@ class TestDSL:
         with pytest.raises(ValueError, match="ID cannot be blank"):
             client.get_listing_capacity(listing_id='')
 
+    @responses.activate
+    def test_cancel_reservation_applies_policy_by_default(self, client):
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/reservations/2/cancel',
+                      json={'ID': '2', 'workflow_state': 'canceled_without_charge'}, status=200)
+        reservation = client.cancel_reservation(resource_id='2', reason='Customer called to cancel')
+        assert reservation.workflow_state == 'canceled_without_charge'
+        assert responses.calls[0].request.body == b'{"reason": "Customer called to cancel"}'
+
+    @responses.activate
+    def test_cancel_reservation_sends_mode_when_given(self, client):
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/reservations/2/cancel',
+                      json={'ID': '2'}, status=200)
+        client.cancel_reservation(resource_id='2', reason='Goodwill refund', mode='full_refund')
+        assert responses.calls[0].request.body == b'{"reason": "Goodwill refund", "mode": "full_refund"}'
+
 class TestGlobalClient:
     def test_global_client_init(self):
         upwoof_listings.api_key = 'global_key'
@@ -309,6 +324,10 @@ class TestAllDSL:
                       json={}, status=200)
         client.redeem_gift_card(resource_id='1', code='GIFT123')
 
+        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/reservations/1/cancel',
+                      json={}, status=200)
+        client.cancel_reservation(resource_id='1', reason='Customer called to cancel')
+
     def test_blank_resource_id_raises(self, client):
         singles = [
             'pet', 'accommodation', 'credit_note', 'customer', 'invoice',
@@ -338,6 +357,11 @@ class TestAllDSL:
                 getattr(client, method_name)(resource_id='', code='SAVE10')
             with pytest.raises(ValueError, match="Code cannot be blank"):
                 getattr(client, method_name)(resource_id='1', code='')
+
+        with pytest.raises(ValueError, match="ID cannot be blank"):
+            client.cancel_reservation(resource_id='', reason='Why')
+        with pytest.raises(ValueError, match="Reason cannot be blank"):
+            client.cancel_reservation(resource_id='1', reason='')
 
     def test_delete_reservation_removed(self, client):
         # DELETE /reservations/{id} was removed from the API: confirm the client doesn't offer a

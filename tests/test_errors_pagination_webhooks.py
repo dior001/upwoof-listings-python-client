@@ -52,6 +52,14 @@ class TestValidationErrors:
             client.redeem_gift_card(resource_id='2', code='GIFT123')
 
     @responses.activate
+    def test_refused_cancellation_raises_validation_error_with_errors(self, client):
+        responses.add(responses.POST, f'{BASE}reservations/2/cancel', status=422,
+                      json={'errors': ['cannot cancel']})
+        with pytest.raises(ValidationError) as raised:
+            client.cancel_reservation(resource_id='2', reason='Customer called to cancel')
+        assert raised.value.errors == ['cannot cancel']
+
+    @responses.activate
     def test_errors_is_empty_for_a_non_json_body(self, client):
         responses.add(responses.GET, f'{BASE}listings/', status=500, body='oops')
         with pytest.raises(ClientError) as raised:

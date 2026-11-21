@@ -34,3 +34,20 @@ class ReservationsDSL:
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return resources.Reservation.parse(self.request('patch', f"reservations/{resource_id}", query=params))
+
+    def cancel_reservation(self, *, resource_id: str, reason: str, mode: Optional[str] = None) -> resources.Reservation:
+        """Cancel an awaiting_review or confirmed reservation on the listing's own behalf: a phone
+        cancellation, or an off-platform booking with no customer login to cancel it themselves. `mode`
+        apply_policy (the default) applies the listing's own cancellation policy, exactly as a customer
+        self-cancelling would; `mode` full_refund (owner/manager only) overrides it and refunds any
+        deposit paid in full, regardless of the cancellation window. Raises ValidationError (HTTP 422) if
+        the cancellation itself is refused (e.g. an unrefunded payment blocks it), with the API's reasons
+        in `errors`."""
+        if not resource_id:
+            raise ValueError("ID cannot be blank")
+        if not reason:
+            raise ValueError("Reason cannot be blank")
+        params: Dict[str, Any] = {'reason': reason}
+        if mode:
+            params['mode'] = mode
+        return resources.Reservation.parse(self.request('post', f"reservations/{resource_id}/cancel", query=params))
