@@ -24,6 +24,9 @@ class PetsDSL:
         return resources.Pet.parse(self.request('patch', f"pets/{resource_id}", query=params))
 
     def delete_pet(self, *, resource_id: str) -> bool:
+        """Raises ValidationError (HTTP 422, `body['error']` `pet_has_history`) when the pet has any stay or
+        listing record (incident, vaccination record, evaluation, care log, grooming, training, report card, staff
+        note...); such a pet can only be deactivated (`deactivate_pet`)."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return self.request('delete', f"pets/{resource_id}").status_code == 204

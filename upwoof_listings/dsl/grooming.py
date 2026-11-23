@@ -9,8 +9,9 @@ class GroomingDSL:
 
     Open times: `date` (YYYY-MM-DD, the listing's zone), `customer_id` and `service_type_ids` required, `pet_ids`
     required for every kind but tours (a tour has no pet), `groomer_id` optional (omit for any provider), and for
-    lessons `pay_with_membership_credits`. A `deposit_cents` above 0 means the booking will be held for a
-    deposit.
+    grooms and lessons `pay_with_membership_credits` (pay with the customer's household's membership credits, one a
+    groom or lesson, from plans whose `credit_uses` include `grooming` or `lessons`; no deposit is then taken). A
+    `deposit_cents` above 0 means the booking will be held for a deposit.
 
     Booking: the open-times params without `date`, plus `starts_at` (ISO 8601, one of the open start times);
     optional `success_url`/`cancel_url` (full https addresses, at most 2000 characters; the success URL may carry
@@ -18,11 +19,12 @@ class GroomingDSL:
     a deposit comes back `pending_payment` (`deposit_status` `pending`) with a `checkout_url` to send the
     customer to; paying makes it `scheduled`, an expired or failed payment cancels it. Raises ValidationError
     (HTTP 422) for a bad pet, service or provider, too many appointments, a time that isn't open, a needed
-    evaluation a pet hasn't passed, a transport pickup address missing, no membership credit (lessons), or
+    evaluation a pet hasn't passed, a transport pickup address missing, not enough membership credits (`no_credit`), or
     Stripe refusing to start the payment (nothing booked).
 
     Appointment lists: optional `customer_id`, `ids`, `status` (scheduled, confirmed, in_progress, completed,
-    cancelled, pending_payment), `page`, `per_page`; newest start first, `checkout_url` always None."""
+    cancelled, pending_payment, no_show: a booked appointment the customer never came to), `page`, `per_page`;
+    newest start first, `checkout_url` always None."""
 
     def _appointment_kind_request(self, method: str, listing_id: str, kind_path: str, action: str,
                                   params: Optional[Dict[str, Any]]):
@@ -46,9 +48,10 @@ class GroomingDSL:
 
     def get_listing_grooming_open_times(self, *, listing_id: str,
                                         params: Dict[str, Any]) -> resources.GroomingOpenTimes:
-        """See the class docstring for the params. Raises ResourceNotFoundError for a customer that isn't the
-        listing's and ValidationError (HTTP 422) for a bad pet, service or groomer, too many grooms, or a service
-        needing an evaluation a pet hasn't passed."""
+        """See the class docstring for the params (`pay_with_membership_credits` optional). Raises
+        ResourceNotFoundError for a customer that isn't the listing's and ValidationError (HTTP 422) for a bad pet,
+        service or groomer, too many grooms, a service needing an evaluation a pet hasn't passed, or not enough
+        membership credits."""
         return resources.GroomingOpenTimes.parse(
             self._appointment_kind_request('get', listing_id, 'grooming', 'open_times', params))
 
