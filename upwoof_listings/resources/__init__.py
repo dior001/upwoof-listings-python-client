@@ -44,3 +44,4 @@ from .stay_product import StayProduct
 from .reservation_retail_item import ReservationRetailItem
 from .invoice_payment import InvoicePayment
 from .attendance_confirmation import AttendanceConfirmation
+from .recurring_reservation_schedule import RecurringReservationSchedule

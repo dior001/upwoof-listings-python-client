@@ -2,7 +2,12 @@ from typing import Any, Dict, List, Optional
 from .. import resources
 
 class MembershipPlansDSL:
-    """A listing's membership plans, read only (team members of the listing; else ClientError, HTTP 403)."""
+    """A listing's membership plans, read only (team members of the listing; else ClientError, HTTP 403).
+
+    `credit_uses` lists what a credit pays for, any of `stays`, `classes` (training class enrollments), `lessons`
+    (private lessons) and `grooming`; it is empty only on a discount-only plan. `credit_use` and
+    `credits_cover_lessons` are deprecated (derived from `credit_uses`, and `credit_use` can't express grooming or
+    lessons): read `credit_uses`."""
 
     def get_listing_membership_plans(self, *, listing_id: str,
                                      params: Optional[Dict[str, Any]] = None) -> List[resources.MembershipPlan]:

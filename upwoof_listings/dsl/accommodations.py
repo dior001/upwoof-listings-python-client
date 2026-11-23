@@ -11,6 +11,7 @@ class AccommodationsDSL:
         return resources.Accommodation.parse(self.request('get', f"accommodations/{resource_id}"))
 
     def create_accommodation(self, *, params: Dict[str, Any]) -> resources.Accommodation:
+        """Owner/manager only: a staff member's token raises ClientError (HTTP 403)."""
         return resources.Accommodation.parse(self.request('post', 'accommodations/', query=params))
 
     def update_accommodation(self, *, resource_id: str, params: Dict[str, Any]) -> resources.Accommodation:
@@ -24,6 +25,7 @@ class AccommodationsDSL:
         return resources.Accommodation.parse(self.request('patch', f"accommodations/{resource_id}", query=params))
 
     def delete_accommodation(self, *, resource_id: str) -> bool:
+        """Owner/manager only: a staff member's token raises ClientError (HTTP 403)."""
         if not resource_id:
             raise ValueError("ID cannot be blank")
         return self.request('delete', f"accommodations/{resource_id}").status_code == 204

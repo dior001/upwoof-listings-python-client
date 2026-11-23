@@ -5,7 +5,8 @@ class InvoicePaymentsDSL:
     """The parts an invoice was paid in (split payments). Listing them is open to any team member of the invoice's
     listing; recording and refunding a part need owner/manager with two-factor authentication on (else ClientError,
     HTTP 403, as for an invoice that isn't open). An invoice or part that isn't reachable raises
-    ResourceNotFoundError. A part's `tender` is `card_online`, `card_reader`, `cash`, `check` or `store_credit`."""
+    ResourceNotFoundError. A part's `tender` is `card_online`, `card_reader`, `cash`, `check`, `store_credit` or
+    `gift_card` (paid from a gift card at the front desk; refunding it puts the value back on the card)."""
 
     def get_invoice_payments(self, *, invoice_id: str,
                              params: Optional[Dict[str, Any]] = None) -> List[resources.InvoicePayment]:
