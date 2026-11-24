@@ -45,3 +45,7 @@ from .reservation_retail_item import ReservationRetailItem
 from .invoice_payment import InvoicePayment
 from .attendance_confirmation import AttendanceConfirmation
 from .recurring_reservation_schedule import RecurringReservationSchedule
+from .reservation_accommodation_assignment import ReservationAccommodationAssignment
+from .pet_feeding_plan import PetFeedingPlan
+from .pet_medication_plan import PetMedicationPlan
+from .care_log_entry import CareLogEntry

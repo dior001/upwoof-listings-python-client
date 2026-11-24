@@ -19,7 +19,8 @@ class NotificationTemplatesDSL:
         `reservation_type` (any_type default, boarding, daycare, grooming), `subject`, `body`, `enabled`
         optional, and fields not sent are left unchanged. Raises ResourceNotFoundError for a pair the listing
         isn't offered (sms only for reservation_confirmed/upcoming_stay_reminder; grooming only for
-        invoice_finalized/payment_received) and ValidationError (HTTP 422) for an unknown {{tag}}, a length
+        invoice_finalized/payment_received; `appointment_reminder`, the day-before appointment reminder, is
+        email and any_type only) and ValidationError (HTTP 422) for an unknown {{tag}}, a length
         over the limit, or switching off a notification that can't be."""
         if not listing_id:
             raise ValueError("ID cannot be blank")

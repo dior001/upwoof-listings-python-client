@@ -24,7 +24,14 @@ class GroomingDSL:
 
     Appointment lists: optional `customer_id`, `ids`, `status` (scheduled, confirmed, in_progress, completed,
     cancelled, pending_payment, no_show: a booked appointment the customer never came to), `page`, `per_page`;
-    newest start first, `checkout_url` always None."""
+    newest start first, `checkout_url` always None. An appointment's `reminder_sent_at` is when its day-before
+    reminder went to the customer (None until then).
+
+    No-shows (AppointmentNoShowsDSL): `mark_<kind>_no_show` marks a scheduled or confirmed appointment whose start has passed a no-show
+    (`status` `no_show`). A deposit held for it is kept (`deposit_status` `forfeited`; owner/manager only, else
+    ClientError, HTTP 403); with none held, the listing's no-show fee for that kind (if set) is billed on its own
+    invoice. The customer is told. Raises ResourceNotFoundError for an appointment that isn't the listing's of that
+    kind and ValidationError (HTTP 422) for one that can't be marked."""
 
     def _appointment_kind_request(self, method: str, listing_id: str, kind_path: str, action: str,
                                   params: Optional[Dict[str, Any]]):
