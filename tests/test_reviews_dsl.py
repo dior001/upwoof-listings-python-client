@@ -9,7 +9,7 @@ def client():
 class TestReviewsDSL:
     @responses.activate
     def test_get_listing_reviews(self, client):
-        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/listings/1/reviews',
+        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/listings/1/reviews',
                       json=[{'ID': 1, 'RATING': 5, 'BODY': 'Great stay'}], status=200)
         reviews = client.get_listing_reviews(listing_id='1')
         assert len(reviews) == 1
@@ -19,7 +19,7 @@ class TestReviewsDSL:
 
     @responses.activate
     def test_create_reservation_review(self, client):
-        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/reservations/1/review',
+        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/reservations/1/review',
                       json={'ID': 2, 'RATING': 4, 'RESERVATION_ID': 1}, status=201)
         review = client.create_reservation_review(reservation_id='1', params={'rating': 4})
         assert review.id == 2
@@ -28,7 +28,7 @@ class TestReviewsDSL:
 
     @responses.activate
     def test_respond_to_review(self, client):
-        responses.add(responses.POST, 'https://pethotels.upwoof.com/api/v1/listings/1/review_response',
+        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/listings/1/review_response',
                       json={'ID': 2, 'RESPONSE_BODY': 'Thank you!'}, status=200)
         review = client.respond_to_review(listing_id='1', params={'review_id': 2, 'response_body': 'Thank you!'})
         assert review.id == 2
