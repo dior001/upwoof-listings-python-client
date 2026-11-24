@@ -32,6 +32,9 @@ from .stay_products import StayProductsDSL
 from .invoice_payments import InvoicePaymentsDSL
 from .attendance_confirmations import AttendanceConfirmationsDSL
 from .recurring_reservation_schedules import RecurringReservationSchedulesDSL
+from .pet_care_plans import PetCarePlansDSL
+from .care_log_entries import CareLogEntriesDSL
+from .appointment_no_shows import AppointmentNoShowsDSL
 
 class DSL(
     ListingsDSL,
@@ -67,7 +70,10 @@ class DSL(
     StayProductsDSL,
     InvoicePaymentsDSL,
     AttendanceConfirmationsDSL,
-    RecurringReservationSchedulesDSL
+    RecurringReservationSchedulesDSL,
+    PetCarePlansDSL,
+    CareLogEntriesDSL,
+    AppointmentNoShowsDSL
 ):
     @property
     def resources(self):

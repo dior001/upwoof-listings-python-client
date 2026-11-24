@@ -39,8 +39,11 @@ class OrdersDSL:
         return resources.Order.parse(self.request('post', path, query={'code': code}))
 
     def redeem_gift_card(self, *, resource_id: str, code: str) -> resources.Order:
-        """Redeem a gift card against an order as a discount line item, up to whichever is
-        smaller: the order's remaining balance or the gift card's remaining balance.
+        """Hold a gift card against an order as a payment, up to whichever is smaller: the order's
+        remaining balance or the gift card's remaining balance. The order's `price_cents` and
+        `order_line_items` don't change; the hold is listed in the order's `gift_card_holds` (each with
+        `amount_cents`, `currency`, `gift_card_id`, `invoice_payment_id`, `settled_at` once it paid the
+        main invoice, and `reversed_at` once given back to the card).
 
         Raises ResourceNotFoundError (HTTP 404) for an unknown order, and for any code that isn't a
         usable gift card here: unknown, expired, used up or another listing's all get the same 404,

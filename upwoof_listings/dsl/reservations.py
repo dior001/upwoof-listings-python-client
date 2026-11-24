@@ -38,6 +38,21 @@ class ReservationsDSL:
             raise ValueError("ID cannot be blank")
         return resources.Reservation.parse(self.request('patch', f"reservations/{resource_id}", query=params))
 
+    def update_reservation_unit_assignment(self, *, reservation_id: str, unit_assignment_id: str,
+                                           accommodation_unit_id: Optional[str] = None
+                                           ) -> resources.ReservationAccommodationAssignment:
+        """Place one of a stay's `accommodation_assignments` in a physical unit (run or kennel) of its
+        accommodation, or, with no `accommodation_unit_id`, take it out of its unit. Any team member of the
+        stay's listing. Raises ResourceNotFoundError for a stay that isn't at the caller's listings, an assignment
+        that isn't the stay's, or a unit that isn't an active unit of its accommodation, and ValidationError
+        (HTTP 422, "The unit is taken by another stay on some of these nights") when another stay holds the unit
+        on any of this stay's nights."""
+        if not reservation_id or not unit_assignment_id:
+            raise ValueError("ID cannot be blank")
+        path = f"reservations/{reservation_id}/unit_assignments/{unit_assignment_id}"
+        return resources.ReservationAccommodationAssignment.parse(
+            self.request('patch', path, query={'accommodation_unit_id': accommodation_unit_id}))
+
     def cancel_reservation(self, *, resource_id: str, reason: str, mode: Optional[str] = None) -> resources.Reservation:
         """Cancel an awaiting_review or confirmed reservation on the listing's own behalf: a phone
         cancellation, or an off-platform booking with no customer login to cancel it themselves. `mode`
