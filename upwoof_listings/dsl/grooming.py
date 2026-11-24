@@ -27,7 +27,8 @@ class GroomingDSL:
     newest start first, `checkout_url` always None. An appointment's `reminder_sent_at` is when its day-before
     reminder went to the customer (None until then).
 
-    No-shows (AppointmentNoShowsDSL): `mark_<kind>_no_show` marks a scheduled or confirmed appointment whose start has passed a no-show
+    No-shows (AppointmentNoShowsDSL): `mark_<kind>_no_show` marks a scheduled or confirmed appointment whose start
+    has passed a no-show
     (`status` `no_show`). A deposit held for it is kept (`deposit_status` `forfeited`; owner/manager only, else
     ClientError, HTTP 403); with none held, the listing's no-show fee for that kind (if set) is billed on its own
     invoice. The customer is told. Raises ResourceNotFoundError for an appointment that isn't the listing's of that

@@ -4,7 +4,7 @@ from responses import matchers
 from upwoof_listings.client import Client
 from upwoof_listings.errors import ResourceNotFoundError, ValidationError
 
-BASE = "https://pethotels.upwoof.com/api/v1/"
+BASE = "https://www.upwoof.com/api/v1/"
 
 # pylint: disable=redefined-outer-name
 

@@ -9,7 +9,7 @@ def client():
 class TestWaiverSignaturesDSL:
     @responses.activate
     def test_get_reservation_waiver_signature(self, client):
-        responses.add(responses.GET, 'https://pethotels.upwoof.com/api/v1/reservations/1/waiver_signature',
+        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/reservations/1/waiver_signature',
                       json={'ID': 1, 'SIGNATURE_DATA': 'Jane Doe', 'RESERVATION_ID': 1}, status=200)
         signature = client.get_reservation_waiver_signature(reservation_id='1')
         assert signature.id == 1

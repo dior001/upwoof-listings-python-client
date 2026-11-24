@@ -209,7 +209,7 @@ transaction) joins the reservation, invoice and credit note events a subscriptio
 
 ## Documentation
 
-https://pethotels.upwoof.com/api-docs/v1
+https://www.upwoof.com/api-docs/v1
 
 ## Contributing
 

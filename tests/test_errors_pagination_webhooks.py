@@ -7,7 +7,7 @@ from upwoof_listings import webhooks
 from upwoof_listings.client import Client
 from upwoof_listings.errors import ClientError, ResourceNotFoundError, ValidationError
 
-BASE = 'https://pethotels.upwoof.com/api/v1/'
+BASE = 'https://www.upwoof.com/api/v1/'
 
 # pylint: disable=redefined-outer-name
 
