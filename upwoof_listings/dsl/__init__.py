@@ -35,6 +35,7 @@ from .recurring_reservation_schedules import RecurringReservationSchedulesDSL
 from .pet_care_plans import PetCarePlansDSL
 from .care_log_entries import CareLogEntriesDSL
 from .appointment_no_shows import AppointmentNoShowsDSL
+from .email_addresses import EmailAddressesDSL
 
 class DSL(
     ListingsDSL,
@@ -73,7 +74,8 @@ class DSL(
     RecurringReservationSchedulesDSL,
     PetCarePlansDSL,
     CareLogEntriesDSL,
-    AppointmentNoShowsDSL
+    AppointmentNoShowsDSL,
+    EmailAddressesDSL
 ):
     @property
     def resources(self):
