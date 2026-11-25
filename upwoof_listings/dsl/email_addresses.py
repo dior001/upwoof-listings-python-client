@@ -25,8 +25,10 @@ class EmailAddressesDSL:
                                      params: Dict[str, Any]) -> resources.ListingEmailAddress:
         """`name` and `role_key` (`[a-z][a-z0-9-]{1,29}`, unique at the listing, not reserved) required; optional
         `active` (default True), `recipient_scope` (`owners_and_managers`, the default, `all_team` or
-        `selected`), `selected_user_ids` (team members, required when `selected`) and `show_on_profile`.
-        Raises ValidationError (HTTP 422) for a taken or reserved role key."""
+        `selected`), `selected_user_ids` (team members, required when `selected`), `show_on_profile`, and the AI
+        assistant's `ai_role`, `ai_instructions` and `ai_review_required` (False also needs
+        `ai_automatic_confirmation: True`; see AiTasksDSL). Raises ValidationError (HTTP 422) for a taken or
+        reserved role key."""
         if not listing_id:
             raise ValueError("ID cannot be blank")
         path = f"listings/{listing_id}/email_addresses"
@@ -34,7 +36,8 @@ class EmailAddressesDSL:
 
     def patch_listing_email_address(self, *, listing_id: str, listing_email_address_id: str,
                                     params: Dict[str, Any]) -> resources.ListingEmailAddress:
-        """Changes only the fields sent. Raises ValidationError (HTTP 422, error `bookings_role_key`) when
+        """Changes only the fields sent (the AI fields as for create; `ai_role: None` switches the assistant
+        off). Raises ValidationError (HTTP 422, error `bookings_role_key`) when
         changing the bookings address's `role_key`."""
         if not listing_id or not listing_email_address_id:
             raise ValueError("ID cannot be blank")

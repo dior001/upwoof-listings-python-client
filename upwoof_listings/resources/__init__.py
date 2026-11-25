@@ -51,3 +51,4 @@ from .pet_medication_plan import PetMedicationPlan
 from .care_log_entry import CareLogEntry
 from .listing_email_address import ListingEmailAddress
 from .inbound_email_record import InboundEmailRecord
+from .ai_task import AiTask
