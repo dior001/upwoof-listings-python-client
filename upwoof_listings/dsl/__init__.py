@@ -1,4 +1,5 @@
 from .listings import ListingsDSL
+from .listing_websites import ListingWebsitesDSL
 from .pets import PetsDSL
 from .accommodations import AccommodationsDSL
 from .credit_notes import CreditNotesDSL
@@ -11,7 +12,6 @@ from .users import UsersDSL
 from .accommodation_types import AccommodationTypesDSL
 from .animal_types import AnimalTypesDSL
 from .breeds import BreedsDSL
-from .uw_listing_cms_apps import UwListingCmsAppsDSL
 from .vaccination_records import VaccinationRecordsDSL
 from .waiver_signatures import WaiverSignaturesDSL
 from .report_cards import ReportCardsDSL
@@ -40,6 +40,7 @@ from .ai_tasks import AiTasksDSL
 
 class DSL(
     ListingsDSL,
+    ListingWebsitesDSL,
     PetsDSL,
     AccommodationsDSL,
     CreditNotesDSL,
@@ -52,7 +53,6 @@ class DSL(
     AccommodationTypesDSL,
     AnimalTypesDSL,
     BreedsDSL,
-    UwListingCmsAppsDSL,
     VaccinationRecordsDSL,
     WaiverSignaturesDSL,
     ReportCardsDSL,

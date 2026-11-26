@@ -119,20 +119,6 @@ class TestDSL:
         assert 'status=active' in responses.calls[0].request.url
 
     @responses.activate
-    def test_uw_listing_cms_apps(self, client):
-        responses.add(responses.GET, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
-                      json=[{'ID': 'app1'}], status=200)
-        apps = client.get_uw_listing_cms_apps()
-        assert len(apps) == 1
-        assert apps[0].id == 'app1'
-
-        responses.add(responses.POST, 'https://www.upwoof.com/api/v1/uw_listing_cms_apps/',
-                      json={'ID': 'app2'}, status=201)
-        app = client.create_uw_listing_cms_app(params={'NAME': 'New App'})
-        assert app.id == 'app2'
-        assert '"NAME": "New App"' in responses.calls[1].request.body.decode()
-
-    @responses.activate
     def test_delete_methods(self, client):
         responses.add(responses.DELETE, 'https://www.upwoof.com/api/v1/breeds/breed1',
                       status=204)
@@ -270,7 +256,6 @@ class TestAllDSL:
             ('accommodation_type', 'accommodation_types'),
             ('animal_type', 'animal_types'),
             ('breed', 'breeds'),
-            ('uw_listing_cms_app', 'uw_listing_cms_apps'),
         ]
         # The API never exposed DELETE /reservations/{id}, so the client has no delete_reservation.
         no_delete = {'reservation'}
@@ -332,7 +317,7 @@ class TestAllDSL:
         singles = [
             'pet', 'accommodation', 'credit_note', 'customer', 'invoice',
             'order', 'reservation', 'user', 'listing', 'accommodation_type',
-            'animal_type', 'breed', 'uw_listing_cms_app',
+            'animal_type', 'breed',
         ]
         no_delete = {'reservation'}
         no_update_patch = {'credit_note'}
