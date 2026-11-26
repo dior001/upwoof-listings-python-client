@@ -37,6 +37,7 @@ from .care_log_entries import CareLogEntriesDSL
 from .appointment_no_shows import AppointmentNoShowsDSL
 from .email_addresses import EmailAddressesDSL
 from .ai_tasks import AiTasksDSL
+from .conversations import ConversationsDSL
 
 class DSL(
     ListingsDSL,
@@ -77,7 +78,8 @@ class DSL(
     CareLogEntriesDSL,
     AppointmentNoShowsDSL,
     EmailAddressesDSL,
-    AiTasksDSL
+    AiTasksDSL,
+    ConversationsDSL
 ):
     @property
     def resources(self):

@@ -59,3 +59,5 @@ from .site_review_page import SiteReviewPage
 from .site_availability import SiteAvailability
 from .site_booking_request import SiteBookingRequest
 from .site_inquiry import SiteInquiry
+from .conversation import Conversation
+from .conversation_message import ConversationMessage
