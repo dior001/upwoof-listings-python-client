@@ -55,6 +55,7 @@ from .listing_website import ListingWebsite
 from .site_config import SiteConfig
 from .site_listing import SiteListing
 from .site_accommodation import SiteAccommodation
+from .site_offerings import SiteOfferings
 from .site_review_page import SiteReviewPage
 from .site_availability import SiteAvailability
 from .site_booking_request import SiteBookingRequest

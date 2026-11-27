@@ -3,6 +3,7 @@ import responses
 from responses import matchers
 from upwoof_listings.client import Client
 from upwoof_listings.site_client import SiteClient
+from upwoof_listings.resources import SiteOfferings
 from upwoof_listings.errors import ClientError, ResourceNotFoundError, ValidationError
 
 BASE = "https://www.upwoof.com/api/v1/"
@@ -78,6 +79,14 @@ class TestSiteClient:
                       match=[matchers.header_matcher(AUTH)])
         assert site.get_site_listing().name == 'Paws'
         assert site.get_site_accommodations()[0].name == 'Suite'
+
+    @responses.activate
+    def test_get_site_offerings(self, site):
+        responses.add(responses.GET, f"{BASE}site/offerings", status=200, json={'services': [{'kind': 'grooming'}]},
+                      match=[matchers.header_matcher(AUTH)])
+        offerings = site.get_site_offerings()
+        assert isinstance(offerings, SiteOfferings)
+        assert offerings.services[0]['kind'] == 'grooming'
 
     @responses.activate
     def test_get_site_reviews(self, site):
