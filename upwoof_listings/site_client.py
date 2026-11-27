@@ -33,6 +33,11 @@ class SiteClient:
         """The units a customer could book online."""
         return resources.SiteAccommodation.parse(self._request('get', 'site/accommodations'))
 
+    def get_site_offerings(self) -> resources.SiteOfferings:
+        """What else the listing sells online: services, training classes, membership plans, gift cards, store
+        credit, the shop and its products, and public live cameras, each with the UpWoof page that books or buys it."""
+        return resources.SiteOfferings.parse(self._request('get', 'site/offerings'))
+
     def get_site_reviews(self, *, page: Optional[int] = None) -> resources.SiteReviewPage:
         """A page of published reviews (`reviews`, `page`, `total_pages`)."""
         return resources.SiteReviewPage.parse(self._request('get', 'site/reviews', query={'page': page}))
